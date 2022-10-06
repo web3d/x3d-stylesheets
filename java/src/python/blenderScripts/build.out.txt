@@ -1,0 +1,309 @@
+ant -f C:\\x3d-code\\www.web3d.org\\x3d\\stylesheets\\java\\src\\python\\blenderScripts all
+blender.python.clean:
+Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint.blender.png
+Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint1.blender.png
+Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint2.blender.png
+Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint3.blender.png
+Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint4.blender.png
+Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint5.blender.png
+Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\README.md
+blender.python.clean complete
+======================================================
+blender.python.help.BlenderStlToX3d:
+===========================
+blender --background --factory-startup --python BlenderStlToX3d.py
+Blender 2.90.1 (hash 3e85bb34d0d7 built 2020-09-23 08:36:20)
+found bundled python: C:\Program Files\Blender Foundation\Blender 2.90\2.90\python
+Command line: 5 args ['blender', '--background', '--factory-startup', '--python', 'BlenderStlToX3d.py']
+
+BlenderStlToX3d.py is a Blender Python script to load model.stl and export model.x3d
+Usage:   blender --background --factory-startup --python BlenderStlToX3d.py -- <model>.x3d [<outputpath>]
+Output:  <outputpath>/<model>.stl products/<filename>.ply
+Manual:  https://docs.blender.org/manual/en/latest/render/workflows/command_line.html
+         https://docs.blender.org/manual/en/latest/advanced/command_line/arguments.html#python-options
+Warning: cygwin unix on windows fails command-line invocation, use native operating system shell instead
+
+blender.python.help.BlenderX3dToMultipleExports:
+===========================
+blender --background --factory-startup --python BlenderX3dToMultipleExports.py
+Blender 2.90.1 (hash 3e85bb34d0d7 built 2020-09-23 08:36:20)
+found bundled python: C:\Program Files\Blender Foundation\Blender 2.90\2.90\python
+Command line: 5 args ['blender', '--background', '--factory-startup', '--python', 'BlenderX3dToMultipleExports.py']
+
+Error: You must specify a single .x3d input file with an optional output path
+0  arguments provided []
+
+BlenderX3dToMultipleExports.py is a Blender Python script to load model.x3d and export multiple output files
+Usage:   blender --background --factory-startup --python BlenderX3dToMultipleExports.py -- <model>.x3d [<outputpath>]
+Output:   [<outputpath>]<model>.png etc.
+Manual:  https://docs.blender.org/manual/en/latest/render/workflows/command_line.html
+         https://docs.blender.org/manual/en/latest/advanced/command_line/arguments.html#python-options
+Warning: cygwin unix on windows fails command-line invocation, use native operating system shell instead
+
+Result: 2
+blender.python.help.BlenderX3dToPng:
+===========================
+blender --background --factory-startup --python BlenderX3dToPng.py
+Blender 2.90.1 (hash 3e85bb34d0d7 built 2020-09-23 08:36:20)
+found bundled python: C:\Program Files\Blender Foundation\Blender 2.90\2.90\python
+BlenderX3dToPng.py start...
+
+BlenderX3dToPng.py is a Blender Python script to load <model>.x3d and output image snapshot(s) as <model>.viewpoint.blender.png
+
+Example invocations:
+/cygdrive/c/x3d-code/www.web3d.org/x3d/stylesheets/java/src/python/blenderScripts
+$ ant blender.python.run.BlenderX3dToPng.py
+$ blender.exe --background --factory-startup --python BlenderX3dToPng.py LPD17.x3d products/
+
+Command line: 5 args ['blender', '--background', '--factory-startup', '--python', 'BlenderX3dToPng.py']
+
+Error: invocation must specify a single .x3d input file with an optional output path
+0 arguments provided []
+
+BlenderX3dToPng.py is a Blender Python script to load <model>.x3d and output image snapshot(s) as <model>.viewpoint.blender.png
+Usage:   blender --background --factory-startup --python BlenderX3dToPng.py -- <model>.x3d [<outputpath>]
+Output:  <outputpath>/<model>.viewpoint#.blender.png
+Manual:  https://docs.blender.org/manual/en/latest/render/workflows/command_line.html
+         https://docs.blender.org/manual/en/latest/advanced/command_line/arguments.html#python-options
+
+Result: 2
+blender.python.help:
+blender.python.help complete
+======================================================
+blender.python.build.README.file:
+C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\README.md
+README
+			
+This directory contains product files as unit tests for blender.python conversions of
+* LPD17.stl
+* LPD17.x3d
+blender.python.run.BlenderStlToX3d.py:
+===========================
+blender --background --factory-startup --python BlenderStlToX3d.py -- LPD17.stl products
+Blender 2.90.1 (hash 3e85bb34d0d7 built 2020-09-23 08:36:20)Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+
+  File "C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\BlenderStlToX3d.py", line 90, in <module>
+found bundled python: C:\Program Files\Blender Foundation\Blender 2.90\2.90\python    cyan = makeMaterial('Cyan', (0,1,1), (1,1,1), 1)
+
+Command line: 8 args ['blender', '--background', '--factory-startup', '--python', 'BlenderStlToX3d.py', '--', 'LPD17.stl', 'C:\\x3d-code\\www.web3d.org\\x3d\\stylesheets\\java\\src\\python\\blenderScripts/products']
+  File "C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\BlenderStlToX3d.py", line 76, in makeMaterial
+outputPath= C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products
+    mat.diffuse_color = diffuse
+ValueError: bpy_struct: item.attr = val: sequences of dimension 0 should contain 4 items, not 3
+
+Blender quit
+
+blender.python.run.BlenderX3dToPng.py:
+===========================
+blender --background --factory-startup --python BlenderX3dToPng.py -- LPD17.x3d products
+Blender 2.90.1 (hash 3e85bb34d0d7 built 2020-09-23 08:36:20)
+found bundled python: C:\Program Files\Blender Foundation\Blender 2.90\2.90\python
+Info: Deleted 1 object(s)
+Info: Deleted 1 object(s)
+Fra:1 Mem:20.32M (Peak 20.68M) | Time:00:03.17 | Syncing Light
+Fra:1 Mem:20.32M (Peak 20.68M) | Time:00:03.17 | Syncing PointLight
+Fra:1 Mem:20.32M (Peak 20.68M) | Time:00:03.17 | Syncing Viewpoint
+Fra:1 Mem:20.32M (Peak 20.68M) | Time:00:03.17 | Syncing PointLight.001
+Fra:1 Mem:20.32M (Peak 20.68M) | Time:00:03.17 | Syncing Viewpoint.001
+Fra:1 Mem:20.32M (Peak 20.68M) | Time:00:03.17 | Syncing PointLight.002
+Fra:1 Mem:20.32M (Peak 20.68M) | Time:00:03.17 | Syncing Viewpoint.002
+Fra:1 Mem:20.32M (Peak 20.68M) | Time:00:03.17 | Syncing PointLight.003
+Fra:1 Mem:20.32M (Peak 20.68M) | Time:00:03.17 | Syncing Viewpoint.003
+Fra:1 Mem:20.32M (Peak 20.68M) | Time:00:03.17 | Syncing PointLight.004
+Fra:1 Mem:20.32M (Peak 20.68M) | Time:00:03.17 | Syncing Viewpoint.004
+Fra:1 Mem:20.33M (Peak 20.68M) | Time:00:03.17 | Syncing Shape_IndexedFaceSet
+Fra:1 Mem:21.19M (Peak 21.59M) | Time:00:03.20 | Rendering 1 / 64 samples
+Fra:1 Mem:20.97M (Peak 21.59M) | Time:00:03.29 | Rendering 26 / 64 samples
+Fra:1 Mem:20.97M (Peak 21.59M) | Time:00:03.33 | Rendering 51 / 64 samples
+Fra:1 Mem:20.97M (Peak 21.59M) | Time:00:03.35 | Rendering 64 / 64 samples
+Fra:1 Mem:15.04M (Peak 21.59M) | Time:00:03.37 | Sce: Scene Ve:0 Fa:0 La:0
+Saved: 'C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint.blender.png'
+ Time: 00:04.27 (Saving: 00:00.90)
+
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Light
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.001
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.001
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.002
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.002
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.003
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.003
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.004
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.004
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Shape_IndexedFaceSet
+Fra:1 Mem:21.17M (Peak 21.27M) | Time:00:00.03 | Rendering 1 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.09 | Rendering 26 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.13 | Rendering 51 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.14 | Rendering 64 / 64 samples
+Fra:1 Mem:15.03M (Peak 21.27M) | Time:00:00.15 | Sce: Scene Ve:0 Fa:0 La:0
+Saved: 'C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint1.blender.png'
+ Time: 00:00.23 (Saving: 00:00.07)
+
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Light
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.001
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.001
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.002
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.002
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.003
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.003
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.004
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.004
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Shape_IndexedFaceSet
+Fra:1 Mem:21.17M (Peak 21.27M) | Time:00:00.02 | Rendering 1 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.09 | Rendering 26 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.12 | Rendering 51 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.14 | Rendering 64 / 64 samples
+Fra:1 Mem:15.03M (Peak 21.27M) | Time:00:00.15 | Sce: Scene Ve:0 Fa:0 La:0
+Saved: 'C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint2.blender.png'
+ Time: 00:00.24 (Saving: 00:00.08)
+
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Light
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.001
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.001
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.002
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.002
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.003
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.003
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.004
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.004
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Shape_IndexedFaceSet
+Fra:1 Mem:21.17M (Peak 21.27M) | Time:00:00.02 | Rendering 1 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.08 | Rendering 26 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.12 | Rendering 51 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.14 | Rendering 64 / 64 samples
+Fra:1 Mem:15.03M (Peak 21.27M) | Time:00:00.15 | Sce: Scene Ve:0 Fa:0 La:0
+Saved: 'C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint3.blender.png'
+ Time: 00:00.21 (Saving: 00:00.05)
+
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Light
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.001
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.001
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.002
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.002
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.003
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.003
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.004
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.004
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Shape_IndexedFaceSet
+Fra:1 Mem:21.17M (Peak 21.27M) | Time:00:00.01 | Rendering 1 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.09 | Rendering 26 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.12 | Rendering 51 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.14 | Rendering 64 / 64 samples
+Fra:1 Mem:15.03M (Peak 21.27M) | Time:00:00.15 | Sce: Scene Ve:0 Fa:0 La:0
+Saved: 'C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint4.blender.png'
+ Time: 00:00.23 (Saving: 00:00.07)
+
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Light
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.001
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.001
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.002
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.002
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.003
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.003
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing PointLight.004
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Viewpoint.004
+Fra:1 Mem:20.95M (Peak 21.26M) | Time:00:00.01 | Syncing Shape_IndexedFaceSet
+Fra:1 Mem:21.17M (Peak 21.27M) | Time:00:00.01 | Rendering 1 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.09 | Rendering 26 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.12 | Rendering 51 / 64 samples
+Fra:1 Mem:20.95M (Peak 21.27M) | Time:00:00.14 | Rendering 64 / 64 samples
+Fra:1 Mem:15.03M (Peak 21.27M) | Time:00:00.15 | Sce: Scene Ve:0 Fa:0 La:0
+Saved: 'C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.viewpoint5.blender.png'
+ Time: 00:00.22 (Saving: 00:00.06)
+
+BlenderX3dToPng.py start...
+
+BlenderX3dToPng.py is a Blender Python script to load <model>.x3d and output image snapshot(s) as <model>.viewpoint.blender.png
+
+Example invocations:
+/cygdrive/c/x3d-code/www.web3d.org/x3d/stylesheets/java/src/python/blenderScripts
+$ ant blender.python.run.BlenderX3dToPng.py
+$ blender.exe --background --factory-startup --python BlenderX3dToPng.py LPD17.x3d products/
+
+Command line: 8 args ['blender', '--background', '--factory-startup', '--python', 'BlenderX3dToPng.py', '--', 'LPD17.x3d', 'C:\\x3d-code\\www.web3d.org\\x3d\\stylesheets\\java\\src\\python\\blenderScripts/products']
+sourceFile=LPD17.x3d outputPath=C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products
+
+Clean up initial view...
+Info: Deleted 1 object(s)
+Info: Deleted 1 object(s)
+Importing LPD17.x3d ...
+Bounding box for Shape_IndexedFaceSet (to be copied into ModelMetadata.md file, TODO automate)
+* `bboxCenter`  = `-20.0 -8e-06 0.0` (X-Y-Z offset in meters, copied from Blender PNG export output)
+* `bboxSize`    = `208.122711 33.8232 50.16135` (X-Y-Z size in meters, copied from Blender PNG export output)
+Determining if per-vertex coloring is needed...
+Creating new camera...
+Setting the background color... TODO not working!
+dump(bpy.data.worlds['World']) shows that color is set, but has no effect
+bpy.data.objects [bpy.data.objects['Light'], bpy.data.objects['PointLight'], bpy.data.objects['PointLight.001'], bpy.data.objects['PointLight.002'], bpy.data.objects['PointLight.003'], bpy.data.objects['PointLight.004'], bpy.data.objects['Shape_IndexedFaceSet'], bpy.data.objects['TheCamera'], bpy.data.objects['Viewpoint'], bpy.data.objects['Viewpoint.001'], bpy.data.objects['Viewpoint.002'], bpy.data.objects['Viewpoint.003'], bpy.data.objects['Viewpoint.004']]
+
+=====================
+Rendering image to C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products\LPD17.viewpoint.blender.png
+hasViewpoint = True render each available viewpoint.
+
+Viewpoint 1
+Rendering image to C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products\LPD17.viewpoint1.blender.png
+Resetting camera...
+Viewpoint 2
+Rendering image to C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products\LPD17.viewpoint2.blender.png
+Resetting camera...
+Viewpoint 3
+Rendering image to C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products\LPD17.viewpoint3.blender.png
+Resetting camera...
+Viewpoint 4
+Rendering image to C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products\LPD17.viewpoint4.blender.png
+Resetting camera...
+Viewpoint 5
+Rendering image to C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products\LPD17.viewpoint5.blender.png
+Resetting camera...
+BlenderX3dToPng.py complete.
+
+blender.python.run.BlenderX3dToMultipleExports.py:
+===========================
+blender --background --factory-startup --python BlenderX3dToMultipleExports.py -- LPD17.x3d products
+Traceback (most recent call last):Blender 2.90.1 (hash 3e85bb34d0d7 built 2020-09-23 08:36:20)
+found bundled python: C:\Program Files\Blender Foundation\Blender 2.90\2.90\python
+Info: Deleted 1 object(s)
+
+  File "<string>", line 1, in <module>
+  File "C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\BlenderX3dToMultipleExports.py", line 81, in <module>
+    bpy.ops.object.select_by_type(extend=False, type='LAMP')
+  File "C:\Program Files\Blender Foundation\Blender 2.90\2.90\scripts\modules\bpy\ops.py", line 201, in __call__
+    ret = op_call(self.idname_py(), None, kw)
+Command line: 8 args ['blender', '--background', '--factory-startup', '--python', 'BlenderX3dToMultipleExports.py', '--', 'LPD17.x3d', 'C:\\x3d-code\\www.web3d.org\\x3d\\stylesheets\\java\\src\\python\\blenderScripts/products']
+outputPath= C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products
+Info: Deleted 1 object(s)
+TypeError: Converting py args to operator properties:  enum "LAMP" not found in ('MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'HAIR', 'POINTCLOUD', 'VOLUME', 'ARMATURE', 'LATTICE', 'EMPTY', 'GPENCIL', 'CAMERA', 'LIGHT', 'SPEAKER', 'LIGHT_PROBE')
+
+Blender quit
+
+blender.python.run:
+blender.python.run complete
+======================================================
+blender.python.validate:
+Validate input model C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/LPD17.x3d
+parameter: source file LPD17.x3d filesize 113347 bytes
+CommandLine parameter: "-validate" for model validation
+Parsing using Document Object Model (DOM) based X3DLoaderDOM...
+[X3DLoaderDOM] <meta name='warning' content='having difficulty with Blender rendering'/>
+validate results: success, no problems noted
+Validate conversion result C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products/LPD17.blender.x3d
+[Error]  [org.web3d.x3d.jsail.CommandLine] file not found: C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products/LPD17.blender.x3d
+X3dTidy using stylesheet conversion
+Source file C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts\products\LPD17.blender.x3d does not exist
+Java Result: 2
+X3dTidy using X3DJSAIL CommandLine -X3dTidy
+[Error]  [org.web3d.x3d.jsail.CommandLine] file not found: C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\blenderScripts/products/LPD17.blender.x3d
+===========================
+blender.python.all:
+all:
+BUILD SUCCESSFUL (total time: 19 seconds)

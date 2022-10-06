@@ -1,0 +1,134 @@
+localadmin@DESKTOP-2S09UKA /cygdrive/c/x3d-code/www.web3d.org/x3d/stylesheets/java/src/python/pyjnius
+$ ant configuration
+Buildfile: C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjnius\build.xml
+
+clean:
+     [echo] clean/delete backup files for project pyjnius
+   [delete] Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjnius\HelloWorld.future.py
+   [delete] Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjnius\HelloWorld.py
+   [delete] Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjnius\HelloWorld_RoundTrip1.x3d
+   [delete] Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjnius\HelloWorld_RoundTrip2.x3d
+   [delete] Deleting C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjnius\build.xml.bak
+
+configuration.prerequisites:
+     [echo] Ensure needed libraries are installed.
+     [echo]
+     [echo] Full administrator permissions may be needed to run these tasks successfully!
+     [echo] Meanwhile ensure that no other user accounts are simultaneously locking files.
+     [echo] =================================
+     [echo] node.js and npm are required  https://nodejs.org/en  https://docs.npmjs.com/cli/install
+     [echo] - - - - -
+     [echo] which node
+     [exec] /cygdrive/c/Program Files/nodejs/node
+     [echo] - - - - -
+     [echo] node --version
+     [exec] v10.15.3
+     [echo] - - - - -
+     [echo] npm.cmd --version
+     [exec] 6.9.0
+     [echo] - - - - -
+     [echo] npm.cmd install
+     [exec] audited 34 packages in 0.385s
+     [exec] found 0 vulnerabilities
+     [exec]
+     [echo] - - - - -
+     [echo] npm.cmd version
+     [exec] { pythonSAI: '1.0.0',
+     [exec]   npm: '6.9.0',
+     [exec]   ares: '1.15.0',
+     [exec]   cldr: '33.1',
+     [exec]   http_parser: '2.8.0',
+     [exec]   icu: '62.1',
+     [exec]   modules: '64',
+     [exec]   napi: '3',
+     [exec]   nghttp2: '1.34.0',
+     [exec]   node: '10.15.3',
+     [exec]   openssl: '1.1.0j',
+     [exec]   tz: '2018e',
+     [exec]   unicode: '11.0',
+     [exec]   uv: '1.23.2',
+     [exec]   v8: '6.8.275.32-node.51',
+     [exec]   zlib: '1.2.11' }
+     [echo] - - - - -
+     [echo] npm.cmd audit
+     [exec]
+     [exec]                        === npm audit security report ===
+     [exec]
+     [exec] found 0 vulnerabilities
+     [exec]  in 34 scanned packages
+     [echo] =================================
+     [echo] which java
+     [exec] /cygdrive/c/Program Files/Java/jdk1.8.0_202/bin/java
+     [echo] - - - - -
+     [echo] java -version
+     [exec] java version "1.8.0_202"
+     [exec] Java(TM) SE Runtime Environment (build 1.8.0_202-b08)
+     [exec] Java HotSpot(TM) 64-Bit Server VM (build 25.202-b08, mixed mode)
+     [echo] - - - - -
+     [echo] which python
+     [exec] /cygdrive/c/Program Files/Python37/python
+     [echo] - - - - -
+     [echo] python --version
+     [exec] Python 3.7.3
+     [echo] =================================
+     [echo] Pyjnius is a Python library for accessing Java classes,
+     [echo] refer to Pyjnius page for JDK JAVA_HOME and PATH requirements.
+     [echo] https://pyjnius.readthedocs.io/en/latest/installation.html
+     [echo]
+     [echo] Full administrator permissions may be needed to run these tasks successfully!
+     [echo] Meanwhile ensure that no other user accounts are simultaneously locking files.
+     [echo] - - - - -
+     [exec] Python 3.7.3
+     [echo] - - - - -
+     [echo] python -m pip install --upgrade pip setuptools
+     [exec] Requirement already up-to-date: pip in c:\program files\python37\lib\site-packages (19.1.1)
+     [exec] Requirement already up-to-date: setuptools in c:\program files\python37\lib\site-packages (41.0.1)
+     [echo] - - - - -
+     [echo] python -m pip install --upgrade cython
+     [exec] Requirement already up-to-date: cython in c:\program files\python37\lib\site-packages (0.29.10)
+     [echo] - - - - -
+     [echo] python -m pip install --upgrade pyjnius
+     [exec] Requirement already up-to-date: pyjnius in c:\program files\python37\lib\site-packages (1.2.0)
+     [exec] Requirement already satisfied, skipping upgrade: six>=1.7.0 in c:\program files\python37\lib\site-packages (from pyjnius) (1.12.0)
+     [exec] Requirement already satisfied, skipping upgrade: cython in c:\program files\python37\lib\site-packages (from pyjnius) (0.29.10)
+     [echo] If there is a problem with Microsoft Visual C++ Build Tools, be sure that the checkbox for 'Python development' is selected during installation.
+     [echo] =================================
+
+HelloWorld.python:
+     [echo] $env.JAVA_HOME=C:/Program Files/Java/jdk1.8.0_202
+     [echo] $env.CLASSPATH=C:/x3d-code/www.web3d.org/x3d/stylesheets/java/jars/X3DJSAIL.3.3.full.jar;C:/x3d-code/www.web3d.org/x3d/stylesheets/java/lib/saxon9he.jar
+     [echo] $pyjnius.X3DautoclassPath =C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjnius
+     [echo] PYTHONPATH                =C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjnius
+     [echo] $pyjnius.configurationPath=C:/Program Files/Java/jdk1.8.0_202/jre/bin/server;C:\cygwin64\usr\local\bin;C:\cygwin64\bin;.;C:\Program Files\Java\jdk1.8.0_202\bin;C:\apache-ant-1.10.5\bin;C:\Program Files\Python37\Scripts;C:\Program Files\Python37;C:\Program Files\ImageMagick-7.0.6-Q16;C:\WINDOWS;C:\WINDOWS\system32;C:\WINDOWS\System32\Wbem;C:\Program Files\Intel\iCLS Client;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Program Files\Intel\WiFi\bin;C:\Program Files\Common Files\Intel\WirelessCommon;C:\Program Files\Dell\Dell Data Protection\Drivers\TSS\bin;C:\Program Files\Git\cmd;C:\Program Files\IDM Computer Solutions\UltraEdit;C:\Program Files\Instant Reality\bin;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\Program Files\PuTTY;C:\Program Files\jEdit;C:\Program Files\IDM Computer Solutions\UltraCompare;C:\WINDOWS\System32\OpenSSH;C:\Program Files\Blender Foundation\Blender;C:\Program Files\VCG\MeshLab;C:\Program Files\nodejs;C:\Program Files\TortoiseGit\bin;C:\Program Files\TortoiseSVN\bin;C:\apache-maven-3.6.1-bin\bin;C:\Users\localadmin\AppData\Local\Microsoft\WindowsApps;C:\Users\localadmin\AppData\Roaming\npm;C:\Users\localadmin\AppData\Local\Microsoft\WindowsApps
+     [echo] Verifying Apache Ant XML Catalog resolver classpath: ${resolver.dir}/resolver.jar (${resolver.jar.length} bytes)
+     [echo] =====================
+     [echo] create python:
+     [echo] node xml2all.js HelloWorld.x3d
+     [echo] HelloWorld.x3d converted to HelloWorld.py and HelloWorld.future.py
+     [echo] - - - - - - - - - - -
+     [echo] validate python:
+     [echo] Loading HelloWorld.py with python, if successful then saving and validating as HelloWorld_RoundTrip1.x3d version:
+     [move] Moving 1 file to C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjnius
+     [echo] validate HelloWorld_RoundTrip1.x3d
+     [java] CommandLine parameter: "-validate" for model validation
+     [java] parameter: source file HelloWorld_RoundTrip1.x3d filesize 3179 bytes
+     [java] Parsing using Document Object Model (DOM) based X3DLoaderDOM...
+     [java] validate results: success, no problems noted
+     [echo] HelloWorld.py round-trip load test #1 complete
+     [echo] - - - - - -
+     [echo] Loading HelloWorld.future.py with python, if successful then saving and validating as HelloWorld_RoundTrip2.x3d version:
+     [move] Moving 1 file to C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjnius
+     [java] CommandLine parameter: "-validate" for model validation
+     [java] parameter: source file HelloWorld_RoundTrip2.x3d filesize 3179 bytes
+     [java] Parsing using Document Object Model (DOM) based X3DLoaderDOM...
+     [java] validate results: success, no problems noted
+     [echo] HelloWorld.future.py round-trip load test #2 complete
+     [echo] =====================
+     [echo] processHelloWorld.python complete.
+
+configuration:
+     [echo] create conversion scripts using python programs autoclass.py fieldTypesGenerator.py mapToMethodGenerator.py
+     [echo] build configuration complete
+
+BUILD SUCCESSFUL
+Total time: 14 seconds

@@ -1,0 +1,18 @@
+package net.coderextreme;
+
+import org.web3d.x3d.jsail.Core.X3DObject;
+import com.github.victools.jsonschema.generator.SchemaGenerator;
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
+import com.github.victools.jsonschema.generator.SchemaVersion;
+import com.github.victools.jsonschema.generator.OptionPreset;
+import com.github.victools.jsonschema.generator.Option;
+
+public class SchemaG {
+    public static void main(String [] args) {
+        SchemaGeneratorConfig config = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
+                .build();
+
+        System.out.println((new SchemaGenerator(config).generateSchema(X3DObject.class)).toString());
+    }
+   }

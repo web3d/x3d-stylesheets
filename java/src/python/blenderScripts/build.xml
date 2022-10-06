@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="X3DJSAIL src python blender scripts" default="all" basedir=".">
+    
+    <!-- test target utilized in X3DJSAIL: X3D Java SAI Library build.xml -->
+	<target name="all" depends="blender.python.all"/>
+    
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <property name="X3DJSAIL.dir"                location="../../.."/>
+    <property name="X3DJSAIL.jars.dir"           location="${X3DJSAIL.dir}/jars"/>
+    <property name="jsai.full.archive.jar.name"     value="X3DJSAIL.4.0.full.jar"/>
+    
+    <!-- http://stackoverflow.com/questions/919692/how-to-execute-xslt-2-0-with-ant -->
+    <property name="saxon.dir"               value="${X3DJSAIL.dir}/lib" description="relative path"/>
+    <property name="saxon.jar"               value="saxon9he.jar"/>
+    
+    <property name="python.dir"           location="."/>
+    <property name="products.subdir"         value="products"/>
+    <property name="example.model.stl"       value="LPD17.stl"/>
+    <property name="example.model.x3d"       value="LPD17.x3d"/>
+	
+    <target name="blender.python.all"
+            depends="blender.python.clean,blender.python.help,blender.python.run,blender.python.validate">
+    </target>
+    
+    <target name="blender.python.clean">
+        <delete verbose="true">
+            <fileset dir="${python.dir}">
+                <include name="*.ply"/>
+                <include name="*.x3d"/>
+                <exclude name="${example.model.stl}"/>
+                <exclude name="${example.model.x3d}"/>
+            </fileset>
+            <fileset dir="${products.subdir}">
+                <include name="*.*"/>
+            </fileset>
+        </delete>
+        <echo message="blender.python.clean complete"/>
+        <echo message="======================================================"/>
+    </target>
+	
+    <target name="blender.python.help"
+            depends="blender.python.help.BlenderStlToX3d,blender.python.help.BlenderX3dToMultipleExports,blender.python.help.BlenderX3dToPng">
+        <echo message="blender.python.help complete"/>
+        <echo message="======================================================"/>
+    </target>
+	
+    <target name="blender.python.help.BlenderStlToX3d">
+        <echo message="==========================="/>
+        <echo message="blender --background --factory-startup --python BlenderStlToX3d.py"/>
+        <exec executable="blender" dir="${python.dir}">
+            <arg value="--background"/>
+            <arg value="--factory-startup"/>
+            <arg value="--python"/>
+            <arg value="BlenderStlToX3d.py"/>
+        </exec>
+    </target>
+	
+    <target name="blender.python.help.BlenderX3dToMultipleExports">
+        <echo message="==========================="/>
+        <echo message="blender --background --factory-startup --python BlenderX3dToMultipleExports.py"/>
+        <exec executable="blender" dir="${python.dir}">
+            <arg value="--background"/>
+            <arg value="--factory-startup"/>
+            <arg value="--python"/>
+            <arg value="BlenderX3dToMultipleExports.py"/>
+        </exec>
+    </target>
+	
+    <target name="blender.python.help.BlenderX3dToPng">
+        <echo message="==========================="/>
+        <echo message="blender --background --factory-startup --python BlenderX3dToPng.py"/>
+        <exec executable="blender" dir="${python.dir}">
+            <arg value="--background"/>
+            <arg value="--factory-startup"/>
+            <arg value="--python"/>
+            <arg value="BlenderX3dToPng.py"/>
+        </exec>
+    </target>
+	
+    <target name="blender.python.run"
+         depends="blender.python.build.README.file,blender.python.run.BlenderStlToX3d.py,blender.python.run.BlenderX3dToPng.py,blender.python.run.BlenderX3dToMultipleExports.py">
+        <echo message="blender.python.run complete"/>
+        <echo message="======================================================"/>
+    </target>
+	
+	<target name="blender.python.build.README.file" description="create description for product files">
+        <property name="model.README.md" location="${python.dir}/${products.subdir}/README.md"/>
+		<delete file="${model.README.md}" verbose="false" failonerror="false"/>
+		<!-- set properties for date and time -->
+        <tstamp>
+            <format property="time" pattern="HH:mm:ss"/>
+        </tstamp>
+        <tstamp>
+            <format property="date" pattern="d MMMM yyyy"/>
+        </tstamp>
+	
+		<echo   file="${model.README.md}" append="true" message="README"/><!-- ${date} ${time} -->
+		<echo   file="${model.README.md}" append="true">
+			
+This directory contains product files as unit tests for blender.python conversions of
+* ${example.model.stl}
+* ${example.model.x3d}
+</echo>
+        <echo message="${model.README.md}"/>
+        <concat>
+            <fileset file="${model.README.md}"/>
+        </concat>
+    </target>
+    
+    <target name="blender.python.run.BlenderStlToX3d.py">
+        <mkdir dir="products"/>
+        <echo message="==========================="/>
+        <echo message="blender --background --factory-startup --python BlenderStlToX3d.py -- ${example.model.stl} ${products.subdir}"/>
+        <exec executable="blender" dir="${python.dir}">
+            <arg value="--background"/>
+            <arg value="--factory-startup"/>
+            <arg value="--python"/>
+            <arg value="BlenderStlToX3d.py"/>
+            <arg value="--"/><!-- arguments to python script follow -->
+            <arg value="${example.model.stl}"/><!--  input model -->
+            <arg value="${python.dir}/${products.subdir}"/><!-- output directory -->
+        </exec>
+        <echo/>
+    </target>
+	
+    <target name="blender.python.run.BlenderX3dToMultipleExports.py">
+        <mkdir dir="products"/>
+        <echo message="==========================="/>
+        <echo message="blender --background --factory-startup --python BlenderX3dToMultipleExports.py -- ${example.model.x3d} ${products.subdir}"/>
+        <exec executable="blender" dir="${python.dir}">
+            <arg value="--background"/>
+            <arg value="--factory-startup"/>
+            <arg value="--python"/>
+            <arg value="BlenderX3dToMultipleExports.py"/>
+            <arg value="--"/><!-- arguments to python script follow -->
+            <arg value="${example.model.x3d}"/><!-- input model -->
+            <arg value="${python.dir}/${products.subdir}"/><!-- output directory -->
+        </exec>
+        <echo/>
+    </target>
+	
+    <target name="blender.python.run.BlenderX3dToPng.py">
+        <mkdir dir="products"/>
+        <echo message="==========================="/>
+        <echo message="blender --background --factory-startup --python BlenderX3dToPng.py -- ${example.model.x3d} ${products.subdir}"/>
+        <exec executable="blender" dir="${python.dir}">
+            <arg value="--background"/>
+            <arg value="--factory-startup"/>
+            <arg value="--python"/>
+            <arg value="BlenderX3dToPng.py"/>
+            <arg value="--"/><!-- arguments to python script follow -->
+            <arg value="${example.model.x3d}"/><!-- input model -->
+            <arg value="${python.dir}/${products.subdir}"/><!-- output directory -->
+        </exec>
+        <echo/>
+    </target>
+	
+    <target name="blender.python.validate" description="validate .x3d inputs and outputs">
+        <echo message="Validate input model ${python.dir}/${example.model.x3d}"/>
+        <java classname="org.web3d.x3d.jsail.CommandLine" classpath="${X3DJSAIL.jars.dir}/${jsai.full.archive.jar.name};." fork="${fork}">
+            <arg value="${python.dir}/${example.model.x3d}"/><!-- input model -->
+            <arg value="-validate"/>
+        </java>
+        <echo message="Validate conversion result ${python.dir}/${products.subdir}/LPD17.blender.x3d"/>
+        <java classname="org.web3d.x3d.jsail.CommandLine" classpath="${X3DJSAIL.jars.dir}/${jsai.full.archive.jar.name};." fork="${fork}">
+            <arg value="${python.dir}/${products.subdir}/LPD17.blender.x3d"/>
+            <arg value="-validate"/>
+        </java>
+        <echo message="X3dTidy using stylesheet conversion"/>
+        <java classname="net.sf.saxon.Transform" classpath="${saxon.dir}/${saxon.jar};." fork="${fork}">
+            <!-- <arg value="-t"/>  timing information -->
+            <arg value="-warnings:recover"/> <!-- recover after writing a warning message -->
+            <arg value="-expand:on"/>  <!-- force insertion of default attribute values found in DTD -->
+            <arg value="-s:${python.dir}/${products.subdir}/LPD17.blender.x3d"/>  <!-- source-doc -->
+            <arg value="-o:${python.dir}/${products.subdir}/LPD17.blenderTidy.x3d"/> <!-- output-doc -->
+            <arg value="-xsl:${X3DJSAIL.dir}/../X3dTidy.xslt"/> <!-- style-doc -->
+        </java>
+        <echo message="X3dTidy using X3DJSAIL CommandLine -X3dTidy"/>
+        <java classname="org.web3d.x3d.jsail.CommandLine" classpath="${X3DJSAIL.jars.dir}/${jsai.full.archive.jar.name};." fork="${fork}">
+            <arg value="${python.dir}/${products.subdir}/LPD17.blender.x3d"/>
+            <arg value="-X3dTidy"/>
+            <arg value="-toFile"/>
+            <arg value="${python.dir}/${products.subdir}/LPD17.blender.tidy.x3d"/>
+        </java>
+        <!-- blender output canonicalization tests fail because model file is too large for DOM loader
+        <echo message="now canonicalize X3dTidy output:"/>
+        <java classname="org.web3d.x3d.tools.x3db.X3dCanonicalizer"
+              classpath="${c14n.dir}/${c14n.jar}"
+                   fork="false"
+            failonerror="false">
+            <arg value="${python.dir}/${products.subdir}/LPD17.blenderTidy.x3d"/>
+            <arg value="${python.dir}/${products.subdir}/LPD17.blenderTidyCanonical.xml"/>
+        </java>
+        <echo message="check well-formedness of canonical form"/>
+        <xmlvalidate file="${python.dir}/${products.subdir}/LPD17.blenderTidyCanonical.xml" failonerror="false" warn="true" lenient="true"/>
+        <echo message="check DTD validation  of canonical form"/>
+        <xmlvalidate file="${python.dir}/${products.subdir}/LPD17.blenderTidyCanonical.xml" failonerror="false" warn="true" lenient="false">
+            <xmlcatalog refid="X3dCatalog"/>
+        </xmlvalidate>
+        <echo message="X3D-Tidy cleanup conversion result ${python.dir}/${products.subdir}/LPD17.blender.x3d"/>
+        <echo message="Canonicalize conversion result ${python.dir}/${products.subdir}/LPD17.blender.x3d"/>
+        <java classname="org.web3d.x3d.jsail.CommandLine" classpath="${X3DJSAIL.jars.dir}/${jsai.full.archive.jar.name};." fork="${fork}">
+            <arg value="${python.dir}/${products.subdir}/LPD17.blender.tidy.x3d"/>
+            <arg value="-canonicalize"/>
+        </java> -->
+        <echo message="==========================="/>
+    </target>
+    
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    
+</project>

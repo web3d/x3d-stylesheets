@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2000-2022 held by the author(s).  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer
+      in the documentation and/or other materials provided with the
+      distribution.
+    * Neither the names of the Naval Postgraduate School (NPS)
+      Modeling Virtual Environments and Simulation (MOVES) Institute
+      (https://www.nps.edu and https://www.MovesInstitute.org)
+      nor the names of its contributors may be used to endorse or
+      promote products derived from this software without specific
+      prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<project name="X3D python" default="help" basedir=".">
+    <description>Build and test the Python X3D project.</description>
+
+    <!-- configuration properties ============================================================== -->
+
+    <property name="access.properties.filename"  value="../content/examples/access.properties"/>
+    <property file="${access.properties.filename}"/>
+    
+    <!-- properties common to all build files and archives ======================================== -->
+    <property environment="env"/>
+
+    <!-- java jvmarg parameters ignored on server unless forked -->
+    <property name="fork"                value="true"/>
+
+    <!-- note difference between parent and child build.xml values -->
+    <property name="X3dPackageDirectory" value="src/x3d"/><!-- not x3d! -->
+
+    <!-- note that Netbeans default path is built in and has to be overridden by going to     -->
+    <!-- Netbeans > Tools > Options > Java > Ant                                              -->
+    <!-- and then pointing to C:\apache-ant-1.10. (or somesuch locally installed directory)  -->
+
+    <!-- ANT Contrib archive at http://sourceforge.net/projects/ant-contrib/files    (v1.0b3) -->
+    <!-- must have ant-contrib-1.0b3.jar in ANT_HOME/lib (or else specify path)               -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+
+    <!-- https://stackoverflow.com/questions/919692/how-to-execute-xslt-2-0-with-ant -->
+    <!-- https://sourceforge.net/projects/saxon/files/Saxon-HE jar download handled in X3DJSAIL build -->
+    <!-- SaxonHE 11 (java.lang.NoClassDefFoundError: org/xmlresolver/Resolver) https://saxonica.plan.io/boards/3/topics/8478?r=8480 -->
+    <property name="saxon.dir"        location="../java/lib" description="relative path via stylesheets directory"/>
+    <property name="saxon.jar"           value="saxon-he-11.3.jar"/><!-- previously saxon-he-11.2.jar saxon-he-10.6.jar saxon9he.jar -->
+    <property name="xmlresolver.jar"     value="xmlresolver-4.2.0.jar"/><!-- required with saxon-he-11+.jar -->
+
+    <!-- ant jar manifest properties -->
+    <property name="user.name.build" value="Don Brutzman, brutzman@nps.edu"/>
+
+    <property name="examples.dir"       location="../content/examples"/>
+    <property name="X3dDtdsSchemas.dir" location="../../specifications"/>
+    <!-- Current official X3D Schema source file is version 3.3, development in progress for X3D 4.0 -->
+    <property name="X3dSchemaSource"    value="x3d-4.0.xsd"/>
+    <property name="X3dSchemaSource4.0" value="x3d-4.0.xsd"/>
+    <property name="X3dSchemaSource3.3" value="x3d-3.3.xsd"/>
+    <property name="X3dSchemaSource3.2" value="x3d-3.2.xsd"/>
+    <property name="X3dSchemaSource3.1" value="x3d-3.1.xsd"/>
+    <property name="X3dSchemaSource3.0" value="x3d-3.0.xsd"/>
+    <!-- Current official X3D Unified Object Model source file is version 3.3, development in progress for X3D 4.0 -->
+    <property name="X3dUnifiedObjectModel"    value="X3dUnifiedObjectModel-4.0.xml" description="default for X3DJSAIL"/>
+    <property name="X3dUnifiedObjectModel4.0" value="X3dUnifiedObjectModel-4.0.xml" description="draft, experimental"/>
+    <property name="X3dUnifiedObjectModel3.3" value="X3dUnifiedObjectModel-3.3.xml"/>
+    <property name="X3dUnifiedObjectModel3.2" value="X3dUnifiedObjectModel-3.2.xml"/>
+    <property name="X3dUnifiedObjectModel3.1" value="X3dUnifiedObjectModel-3.1.xml"/>
+    <property name="X3dUnifiedObjectModel3.0" value="X3dUnifiedObjectModel-3.0.xml"/>
+
+    <property name="page.x3d.py"        value="https://www.web3d.org/x3d/stylesheets/python/python.html"/>
+    <property name="page.pypi"          value="https://pypi.org/project/x3d"/>
+    <property name="page.pypi.tutorial" value="https://packaging.python.org/en/latest/tutorials/packaging-projects/"/>
+
+    <!-- target tasks ===================================================================== -->
+
+    <target name="help" depends="" description="describe Python X3D Package targets">
+        <echo message="ant help: targets to build and test the Python X3D project"/>
+        <echo message="- - - - - - - - - - - - - - - - - - - - - - - -"/>
+        <echo message="administrator permissions for users:"/>
+        <echo message="configuration      install or upgrade prerequisite python modules on your system"/>
+        <echo message="install.x3d.py     install or upgrade x3d.py package installation on your system"/>
+        <echo message="upgrade.x3d.py     (same)"/>
+        <echo message="uninstall.modules  uninstall dependency modules"/>
+        <echo message="uninstall.x3d.py   uninstall x3d.py package"/>
+        <echo message="- - - - - - - - - - - - - - - - - - - - - - - -"/>
+        <echo message="local permissions for users:"/>
+        <echo message="build                build x3d.py package (using parent build.xml in stylesheets/ directory)"/>
+        <echo message="examples             run all examples"/>
+        <echo message="examples.HelloWorld  test HelloWorld conversion with X3dToPython.xslt stylesheet using Saxon"/>
+        <echo message="examples.gui         test gui conversion with X3dToPython.xslt stylesheet using Saxon"/>
+        <echo message="examples.SmokeTests  runs SmokeTests.py to check x3d.py functionality"/>
+        <echo message="help                 this message"/>
+        <echo message="test.x3d.py          load and test x3d.py package in Python"/>
+        <echo message="versions             show locally installed versions of ant, java, python, x3d.py"/>
+        <echo message="view.pages           view reference pages in web browser (launchable via Netbeans only)"/>
+        <echo message="                     ${page.x3d.py}"/>
+        <echo message="                     ${page.pypi}"/>
+        <echo message="                     ${page.pypi.tutorial}"/>
+        <echo message="zip                  create PythonX3dDevelopmentArchive.zip to facilitate developent"/>
+        <echo message="- - - - - - - - - - - - - - - - - - - - - - - -"/>
+        <echo message="administrator permissions for x3d.py developers:"/>
+        <echo message="package.prepare    prepare wheel file for x3d.py package deployment"/>
+        <echo message="package.deploy     deploy Python x3d.py package to PyPi; have password ready, run directly as"/>
+        <echo message="                   python -m twine upload dist/* --verbose"/>
+        <echo message="- - - - - - - - - - - - - - - - - - - - - - - -"/>
+        <echo message="Various build.*.log.txt files in this directory provide example results."/>
+    </target>
+
+    <target name="all" depends="versions,configuration,build,test.x3d.py,examples,package.prepare" description="begin Python X3D Package deployment">
+		    <!--Next tasks are noted as follows. -->
+		    <!--TODO verify, doesn't work from inside ant:
+        <echo message="To upload to PyPi: ant package.deploy"/> -->
+        <echo message="To upload to PyPi: python -m twine upload dist/* --verbose"/>
+        <echo message="To upgrade x3d.py: ant upgrade.x3d.py"/>
+        <echo message="https://pypi.org/project/x3d"/>
+    </target>
+
+    <target name="view.pages" description="view PyPi reference pages in web browser (Netbeans only)">
+        <echo message="use Netbeans to launch the following web pages:"/>
+        <echo message="  ${page.x3d.py}"/>
+        <echo message="  ${page.pypi}"/>
+        <echo message="  ${page.pypi.tutorial}"/>
+        <nbbrowse url="${page.x3d.py} ${page.pypi} ${page.pypi.tutorial}" />
+    </target>
+
+    <target name="build" depends="build.package.x3d.py" description="shortcut"/>
+
+    <target name="build.examples" depends="build,examples"/>
+
+    <target name="build.SmokeTests" depends="build,examples.SmokeTests"/>
+
+    <target name="build.package.x3d.py" description="build x3d.py package using parent build.xml target BuildX3dPythonPackageFromX3duom.saxon">
+        <ant dir =".." antfile="build.xml" inheritAll="false" target="BuildX3dPythonPackageFromX3duom.saxon"/>
+        <antcall target="test.x3d.py"/>
+    </target>
+
+    <target name="build.package.x3d.py.smokeTest" depends="build.package.x3d.py" description="quick build and test">
+        <antcall target="examples.SmokeTests"/>
+    </target>
+
+    <target name="view.build.DeploymentSteps.txt" description="echo build.DeploymentSteps.txt file">
+        <loadfile property="build.DeploymentSteps.txt" srcFile="build.DeploymentSteps.txt"/>
+        <echo message="${build.DeploymentSteps.txt}"/>
+    </target>
+    
+    <target name="test.x3d.py" depends="set.local.PYTHONPATH" description="Load active x3d.py package in python and test">
+        <echo message="Loading active PYTHONPATH x3d.py package in python to check for correctness..."/>
+        <exec executable="python" dir="." vmlauncher="false" failifexecutionfails="true" failonerror="true">
+        <!--<env key="PYTHONPATH" value="${local.PYTHONPATH}"/>-->
+            <arg value="x3d.py"/>
+            <arg value="-v" description="verbose"/>
+        </exec>
+    </target>
+    
+    <target name="test.x3d.py.src" description="Load local x3d.py package in python and test">
+        <echo message="Loading local x3d.py package in python to check for correctness..."/>
+        <property name="X3dPackageDirectoryLocation" location="./${X3dPackageDirectory}"/>
+        <echo message="$X3dPackageDirectory=${X3dPackageDirectory}, $X3dPackageDirectoryLocation=${X3dPackageDirectoryLocation}"/>
+        <exec executable="python" dir="${X3dPackageDirectory}" vmlauncher="false">
+            <arg value="x3d.py"/>
+            <arg value="-v" description="verbose"/>
+        </exec>
+    </target>
+    
+    <target name="examples" depends="versions" description="Test all examples" >
+        <antcall target="test.x3d.py"/>
+        <echo message="==========================================="/>
+        <antcall target="examples.SmokeTests"           inheritAll="false"/><!-- reset property oneFileName -->
+        <echo message="==========================================="/>
+        <!-- order is important, perform prefixed version first in order to restore HelloWorld.py final result -->
+        <antcall target="examples.HelloWorld.prefixed"  inheritAll="false"/><!-- reset property oneFileName -->
+        <echo message="==========================================="/>
+        <antcall target="examples.HelloWorld"           inheritAll="false"/><!-- reset property oneFileName -->
+        <antcall target="examples.HelloWorldX3D4"       inheritAll="false"/><!-- reset property oneFileName -->
+        <antcall target="examples.BackgroundCollection" inheritAll="false"/><!-- reset property oneFileName -->
+        <antcall target="examples.MaterialModulator"    inheritAll="false"/><!-- reset property oneFileName -->
+        <antcall target="examples.NumpyExample"         inheritAll="false"/><!-- reset property oneFileName -->
+    </target>
+    
+    <target name="set.local.PYTHONPATH" depends="" description="Set local.PYTHONPATH" >
+        <!-- user env <property name="local.PYTHONPATH" value="${env.PYTHONPATH}"/> -->
+        <!-- relative <property name="local.PYTHONPATH" value="x3d"/> -->
+        <!-- install  <property name="local.PYTHONPATH" value="c:\users\brutzman.it154928\appdata\local\programs\python\python38\lib\site-packages\x3d"/> -->
+        <property name="local.PYTHONPATH"           location="."/>
+        
+        <echo  message="local.PYTHONPATH=${local.PYTHONPATH}"/><!-- x3d -->
+    </target>
+    
+    <target name="convert.X3dToPython.xslt.prefixed" depends="" description="Convert to python source using x3d.* prefixes" >
+        <property name="insertPackagePrefix" value="true"/>
+        <delete file="examples/HelloWorldPrefixed.py" verbose="true"/>
+        <antcall target="convert.X3dToPython.xslt"/>
+    </target>
+    
+    <target name="convert.X3dToPython.xslt" depends="set.local.PYTHONPATH" description="Test X3dToPython.xslt stylesheet using Saxon" >
+        <property name="oneFileName" value="HelloWorld"/><!-- no file extension -->
+        <property name="insertPackagePrefix" value="false"/><!-- unless previously set -->
+        <echo message="==========================================="/>
+        <delete verbose="true" failonerror="false">
+            <fileset file="examples/${oneFileName}.py"/>
+        </delete>
+        <echo message="==========================================="/>
+        <!-- TODO Saxon XML Catalogs https://www.saxonica.com/html/documentation/sourcedocs/xml-catalogs.html 
+             XML Entity and URI Resolvers http://xerces.apache.org/xml-commons/components/resolver/resolver-article.html
+            <xmlcatalog refid="X3dCatalog"/> -->
+            
+        <java classname="net.sf.saxon.Transform" classpath="${saxon.dir}/${saxon.jar};${saxon.dir}/${xmlresolver.jar};," fork="${fork}">
+            <!-- <arg value="-t" description="timing information"/> -->
+            <arg value="-warnings:recover" description="recover after writing a warning message"/>
+            <arg value="-expand:on" description="force insertion of default attribute values found in DTD"/>
+            <arg value="-s:examples/${oneFileName}.x3d" description="source-doc"/>
+            <arg value="-o:examples/${oneFileName}.py" description="python program to run"/>
+            <arg value="-xsl:../X3dToPython.xslt" description="style-doc"/>
+            <arg value="insertPackagePrefix=${insertPackagePrefix}"/> <!-- parameter -->
+            <!-- <arg value="-catalog:needFileName" description="style-doc"/> -->
+            <!-- <arg value="className=CameraExamples"/> parameter -->
+        </java>
+        <echo message="convert.X3dToPython.xslt conversion of ${oneFileName}.x3d to ${oneFileName}.py complete."/>
+        <loadfile property="pythonFileContents" srcFile="examples/${oneFileName}.py" />
+        <echo message="${pythonFileContents}" />
+        <echo message="==========================================="/>
+        <!-- self-validation test -->
+        <echo message="Loading local x3d.py package in python to check for correctness..."/>
+        <echo message="  then test ${oneFileName}.py execution and self-validation:"/>
+        <echo message="  python examples/${oneFileName}.py"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <env key="PYTHONPATH" value="${local.PYTHONPATH}"/>
+            <arg value="examples/${oneFileName}.py" description="python program to run"/>
+            <arg value="-v"/><!-- verbose -->
+        </exec>
+        <echo message="convert.X3dToPython.xslt conversion of ${oneFileName}.x3d to ${oneFileName}.py complete."/>
+        <echo message="==========================================="/>
+    </target>
+    
+    <target name="examples.HelloWorld.prefixed" description="Test HelloWorld conversion with X3dToPython.xslt stylesheet using Saxon" >
+        <property name="oneFileName" value="HelloWorld" description="no file extension"/>
+        <echo message="Convert and test verbose approach using HelloWorldPrefixed.py"/>
+        <antcall target="convert.X3dToPython.xslt.prefixed"/>
+        <move file="examples/HelloWorld.py" tofile="examples/HelloWorldPrefixed.py" verbose="true"/>
+    </target>
+    
+    <target name="examples.HelloWorld" description="Test HelloWorld X3D 3.3 conversion with X3dToPython.xslt stylesheet using Saxon" >
+        <property name="oneFileName" value="HelloWorld" description="no file extension"/>
+        <antcall target="convert.X3dToPython.xslt"/>
+    </target>
+    
+    <target name="examples.HelloWorldX3D4" description="Test HelloWorld X3D 4.0 conversion with X3dToPython.xslt stylesheet using Saxon" >
+        <property name="oneFileName" value="HelloWorldX3D4" description="no file extension"/>
+        <antcall target="convert.X3dToPython.xslt"/>
+    </target>
+    
+    <!-- TODO gui under consideration
+    <target name="examples.gui" description="Test gui conversion with X3dToPython.xslt stylesheet using Saxon" >
+        <property name="oneFileName" value="gui" description="no file extension"/>
+        <antcall target="convert.X3dToPython.xslt"/>
+    </target> -->
+    
+    <target name="examples.BackgroundCollection" description="Test BackgroundCollection conversion with X3dToPython.xslt stylesheet using Saxon" >
+        <property name="oneFileName" value="BackgroundCollection" description="no file extension; test MFColor validation"/>
+        <antcall target="convert.X3dToPython.xslt"/>
+    </target>
+    
+    <target name="examples.MaterialModulator" description="Test MaterialModulator conversion with X3dToPython.xslt stylesheet using Saxon" >
+        <copy file="C:\x3d-code\www.web3d.org\x3d\content\examples\X3dForWebAuthors\Chapter14Prototypes\MaterialModulator.x3d" todir="examples"/>
+        <property name="oneFileName" value="MaterialModulator" description="no file extension"/>
+        <antcall target="convert.X3dToPython.xslt"/>
+    </target>
+    
+    <target name="examples.PixelTexture256" description="Test PixelTexture256 conversion with X3dToPython.xslt stylesheet using Saxon" >
+        <!-- large file, do not include in build distribution -->
+        <!-- <copy file="C:\x3d-code\www.web3d.org\x3d\content\examples\ConformanceNist\Appearance\PixelTexture\PixelTexture256.x3d" todir="examples"/> -->
+        <property name="oneFileName" value="PixelTexture256" description="no file extension"/>
+        <antcall target="convert.X3dToPython.xslt"/>
+    </target>
+    
+    <target name="examples.NumpyExample" depends="set.local.PYTHONPATH" description="Test NumpyExample.py to check x3d.py functionality with Numpy arrays" >
+        <echo message="Create .x3d model by running NumpyExample.py in python using local build of Python x3d package"/>
+        <echo message="  python examples/NumpyExample.py"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <env key="PYTHONPATH" value="${local.PYTHONPATH}"/>
+            <arg value="examples/NumpyExample.py" description="python program to run"/>
+            <arg value="x3d.py" description="if not listed, uses installed version of x3d package"/>
+            <arg value="-v" description="verbose"/>
+        </exec>
+        <echo message="test.X3dToPython.SmokeTests complete."/>
+        <echo message="==========================================="/>
+    </target>
+    
+    <target name="examples.SmokeTests" depends="set.local.PYTHONPATH" description="Test SmokeTests.py to check x3d.py functionality" >
+        <echo message="Run PythonX3dSmokeTests.py in python using local build of Python x3d package"/>
+        <echo message="  python examples/PythonX3dSmokeTests.py"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <env key="PYTHONPATH" value="${local.PYTHONPATH}"/>
+            <arg value="examples/PythonX3dSmokeTests.py" description="python program to run"/>
+            <arg value="x3d.py" description="if not listed, uses installed version of x3d package"/>
+            <arg value="-v" description="verbose"/>
+        </exec>
+        <echo message="test.X3dToPython.SmokeTests complete."/>
+        <echo message="==========================================="/>
+    </target>
+
+    <target name="versions" description="show tool versions and environment values">
+        <ant dir =".." antfile="build.xml" inheritAll="false" target="versions"/>
+    </target>
+
+    <target name="configuration" depends=""
+            description="install or upgrade prerequisite python modules on your system">
+        <!-- avoid use of - -user switch since that means only current user! -->
+        <echo message="Updating local Python installation configuration..."/>
+        <echo message="Prerequisite: run as administrative user in console granted administrative permissions"/>
+        <echo message="Reference:    build.DeploymentSteps.txt"/>
+        <echo message="----------------"/>
+        <echo message="Check current Python version:"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="--version"/>
+        </exec>
+        <echo message="----------------"/>
+        <echo message="Ensure latest pip installed:"/>
+        <echo message="https://docs.python.org/3/installing/index.html?highlight=pip"/>
+        <echo message="python -m ensurepip --default-pip"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="ensurepip"/>
+            <arg value="--default-pip"/>
+        </exec>
+        <echo message="python -m pip install --upgrade pip"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="--upgrade"/>
+            <arg value="pip"/>
+        </exec>
+        <echo message=" latest version of PyPi’s build installed"/>
+        <echo message="python -m pip install --upgrade build"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="--upgrade"/>
+            <arg value="pip"/>
+        </exec>
+        <echo message="----------------"/>
+        <echo message="Ensure latest setuptools installed:"/>
+        <echo message="python -m pip install --upgrade setuptools wheel"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="--upgrade"/>
+            <arg value="setuptools"/>
+            <arg value="wheel"/>
+        </exec>
+        <echo message="----------------"/>
+        <echo message="https://pypi.org/project/twine"/>
+        <echo message="python -m pip install --upgrade twine"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="--upgrade"/>
+            <arg value="twine"/>
+        </exec>
+        <echo message="----------------"/>
+        <echo message="https://www.pylint.org"/>
+        <echo message="https://en.wikipedia.org/wiki/Pylint"/>
+        <echo message="python -m pip install --upgrade pylint"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="--upgrade"/>
+            <arg value="pylint"/>
+        </exec>
+        <echo message="----------------"/>
+        <echo message="https://www.sphinx-doc.org"/>
+        <echo message="https://en.wikipedia.org/wiki/Sphinx_(documentation_generator)"/>
+        <echo message="python -m pip install --upgrade sphinx"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="--upgrade"/>
+            <arg value="sphinx"/>
+        </exec>
+        <echo message="python -m pip install --upgrade xmlschema"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="--upgrade"/>
+            <arg value="xmlschema"/>
+        </exec>
+        <echo message="python package re (regular expressions, regex standard library) is built in"/>
+    </target>
+    
+    <target name="pylint" depends="build.package.x3d.py" description="run pylint package for detailed warning and error diagnostics">
+        <!-- https://stackoverflow.com/questions/13530448/how-to-run-pylint-from-ant -->
+        <!-- https://stackoverflow.com/questions/63417397/pylint-is-not-recognized-as-an-internal-or-external-command-operable-program -->
+        <echo message="python -m pylint x3d.py"/>
+        <exec executable="python"  dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pylint"/>
+            <arg value="x3d.py"/>
+        </exec>
+        <!-- http://pylint.pycqa.org/en/latest/user_guide/run.html#command-line-options
+             configuration setup (omit space between hyphens):
+             pylint - -generate-rcfile > .pylintrc
+             
+             Configuring snake_case warning:
+             https://stackoverflow.com/questions/48507986/pylint-invalid-function-name/48893283#48893283
+             https://pylint.readthedocs.io/en/latest/user_guide/options.html
+             changed snake_case to camelCase throughout .pylintrc
+             changed max-line-length=100 to 200
+        -->
+    </target>
+    
+    <target name="Sphinx" depends="" description="TODO incomplete - run Sphinx package">
+        <echo message="https://www.sphinx-doc.org"/>
+        <echo message="https://en.wikipedia.org/wiki/Sphinx_(documentation_generator)"/>
+        <echo message="python Sphinx x3d.py"/>
+        <exec executable="Sphinx"  dir="." vmlauncher="false">
+            <arg value="x3d.py"/>
+        </exec>
+    </target>
+    
+    <target name="package.prepare" depends="" description="prepare wheel file for x3d.py package deployment">
+        <!-- see build.DeploymentSteps.txt -->
+        <echo message="Preparing local Python X3D package for deployment to PyPI..."/>
+        <echo message="Prerequisite: run as administrative user with administrative permissions"/>
+        <echo message="References:  build.DeploymentSteps.txt"/>
+        <echo message="             ${page.x3d.py}"/>
+        <echo message="             ${page.pypi}"/>
+        <echo message="             ${page.pypi.tutorial}"/>
+        <echo message="----------------"/>
+        <ant dir =".." antfile="build.xml" inheritAll="false" target="BuildX3dPythonPackageFromX3duom.saxon"/>
+        <echo message="----------------"/>
+        <echo message="Upgrade distribution x3d.py, move prior pypi package files to dist.archive directory"/>
+        <move todir="dist.archive" verbose="true">
+            <fileset dir="dist">
+              <include name="x3d-*.*"/> <!-- not anything else starting with 'x3d' -->
+            </fileset>
+        </move>
+        <echo message="----------------"/>
+        <echo message="View setup.cfg"/>
+        <loadfile property="property.setup.cfg.contents" srcFile="setup.cfg"/>
+        <echo>${property.setup.cfg.contents}</echo>
+        <echo message="----------------"/>
+        <echo message="Copy package contents into ${X3dPackageDirectory}"/>
+        <mkdir dir="${X3dPackageDirectory}"/>
+        <!-- __init__.py should be there in x3d subdirectory -->
+        <copy file="__init__.py" todir="${X3dPackageDirectory}"    verbose="true"/>
+        <copy file="x3d.py"      todir="${X3dPackageDirectory}"    verbose="true"/>
+        <echo message="----------------"/>
+        <echo message="Build distribution package... (caution, this must be done from console and not within Netbeans)"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="build"/>
+        </exec>
+        <!-- SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="setup.py"/>
+            <arg value="sdist"/>
+            <arg value="bdist_wheel"/>
+        </exec> -->
+        <echo message="----------------"/>
+        <!-- https://stackoverflow.com/questions/10528032/listing-all-files-and-subdirectories-using-ant -->
+        <fileset id="dist.contents" dir="dist" includes="**/*"/>
+        <property name="prop.dist.contents" refid="dist.contents"/>
+        <echo>dist contents: ${prop.dist.contents}</echo>
+        <length    property="x3d-4.0.64.2.tar.gz.length" 
+                  file="dist/x3d-4.0.64.2.tar.gz"/>
+        <echo>x3d*.tar.gz: ${x3d-4.0.64.2.tar.gz.length} bytes</echo>
+        <echo message="----------------"/>
+        <antcall target="test.x3d.py"/>
+        <echo message="----------------"/>
+        <echo message="Next commands:"/>
+        <echo message="python -m twine upload dist/* --verbose"/>
+        <echo message="ant upgrade.x3d.py"/>
+        <echo message="  ${page.x3d.py}"/>
+    </target>
+    
+    <target name="package.deploy" depends="" description="deploy Python x3d.py package to PyPi">
+        <echo message="Live upload to PyPi, ensure username ready..."/>
+        <echo message="*** Warning #1: if command hangs after entering pypi user name, possible ssh/certificate problem"/>
+        <!-- windows 10: works on cmd.exe but not on cygwin bash -->
+        <echo message="*** Warning #2: this command needs to be invoked manually from console"/>
+        <echo message="python -m twine upload dist/* --verbose"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="twine"/>
+            <arg value="upload"/>
+            <arg value="dist/*"/>
+            <arg value="--verbose"/>
+        </exec>
+        <echo message="Final step to follow: ant upgrade.x3d.py"/>
+    </target>
+    
+    <target name="install.x3d.py" depends="upgrade.x3d.py" description="alternate name for upgrade.x3d.py target"/>
+    
+    <target name="upgrade.x3d.py" depends="" description="install/upgrade local installation of Python X3D package">
+        <!-- invoking pip via python ensures relevant version is invoked, command-line pip now problematic under windows anyway -->
+        <echo message="Upgrade local installation of Python X3D package"/>
+        <echo message="python -m pip install --upgrade x3d"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="x3d"/>
+            <arg value="--upgrade"/>
+        </exec>
+    </target>
+    
+    <target name="uninstall.modules" depends="versions" description="uninstall dependency modules">
+        <echo message="Uninstall dependency modules"/>
+        <echo message="https://pip.pypa.io/en/stable/reference/pip_uninstall/#pip-uninstall"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="uninstall"/>
+            <arg value="--yes"/>
+            <arg value="pylint"/>
+        </exec>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="uninstall"/>
+            <arg value="--yes"/>
+            <arg value="sphinx"/>
+        </exec>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="uninstall"/>
+            <arg value="--yes"/>
+            <arg value="twine"/>
+        </exec>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="uninstall"/>
+            <arg value="--yes"/>
+            <arg value="wheel"/>
+        </exec>
+    </target>
+    
+    <target name="uninstall.x3d.py" depends="versions" description="Uninstall x3d.py package">
+        <echo message="Uninstall Python x3d package"/>
+        <echo message="Warning: uninstall requires that x3d.py version is not in PYTHONPATH or local directory"/>
+        <echo message="Administrator command: cd .."/>
+        <echo message="Administrator command: python  -m pip uninstall x3d"/>
+        <exec executable="python" dir="." vmlauncher="false">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="uninstall"/>
+            <arg value="--yes"/>
+            <arg value="x3d"/>
+        </exec>
+    </target>
+
+    <target name="zip" depends="clean" description="create PythonX3dDevelopmentArchive.zip to facilitate developent" >
+        <zip destfile="PythonX3dDevelopmentArchive.zip">
+            <zipfileset dir=".." prefix="www.web3d.org/x3d/stylesheets/">
+                <include name="build.xml"/>
+                <include name="X3dUnifiedObjectModel-4.0.xml"/>
+                <include name="X3duomToX3dPythonPackage.xslt"/>
+                <include name="X3dToPython.xslt"/>
+                <include name="license.*"/>
+            </zipfileset>
+            <zipfileset dir="../../tooltips" prefix="www.web3d.org/x3d/tooltips/">
+                <include name="x3d-4.0.profile.xml"/>
+            </zipfileset>
+            <zipfileset dir="." prefix="www.web3d.org/x3d/stylesheets/python">
+                <include name="README.md"/>
+                <include name="build.xml"/>
+                <include name="build.*.txt"/>
+                <include name="python.html"/>
+                <include name="setup.py"/>
+                <include name="*.py"/>
+                <include name=""/>
+                <include name=".pylintrc"/>
+                <include name="license.*"/>
+            </zipfileset>
+            <zipfileset dir="documents" prefix="www.web3d.org/x3d/stylesheets/python/documents">
+                <include name="*.pdf"/>
+            </zipfileset>
+            <zipfileset dir="examples" prefix="www.web3d.org/x3d/stylesheets/python/examples">
+                <include name="*.py"/>
+                <include name="*.x3d"/>
+            <!--<exclude name="*x3d.py"/> TODO -->
+            </zipfileset>
+            <zipfileset dir="jupyter" prefix="www.web3d.org/x3d/stylesheets/python/jupyter">
+                <include name="*.ipynb"/>
+                <include name="*.py"/>
+                <include name="*.pdf"/>
+                <include name="*.x3d"/>
+            <!--<exclude name="*x3d.py"/> TODO -->
+            </zipfileset>
+        </zip>
+    </target>
+
+    <target name="clean" depends="" description="clean odds and ends, also .zip">
+        <delete verbose="true">
+            <fileset dir=".">
+                <include name="PythonX3dDevelopmentArchive.zip"/>
+                <include name="**/~*"/>
+                <include name="**/*.bak"/>
+                <include name="**/*.$$$$$$"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="upload.web3d" depends="clean,zip"
+            description="upload x3d.py package to web3d.org using parent build.xml target scp.upload.python.web3d">
+        <ant dir =".." antfile="build.xml" inheritAll="false" target="scp.upload.python.web3d"/>
+        <echo message="upload.web3d complete"/>
+    </target>
+
+</project>

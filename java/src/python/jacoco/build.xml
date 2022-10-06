@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+
+<!--
+  Copyright (c) 2000-2018 held by the author(s).  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer
+      in the documentation and/or other materials provided with the
+      distribution.
+    * Neither the names of the Naval Postgraduate School (NPS)
+      Modeling Virtual Environments and Simulation (MOVES) Institute
+      (http://www.nps.edu and http://www.MovesInstitute.org)
+      nor the names of its contributors may be used to endorse or
+      promote products derived from this software without specific
+      prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<project name="JaCoCo build" default="all" basedir=".">
+    
+    <description>Builds, tests, and runs the X3D JaCoCo SAI Library project.</description>
+	
+    <property name="java.dir"                value=".."/>
+    <!-- java jvmarg parameters ignored on server unless forked -->
+    <property name="fork"                value="true"/>    <!-- note that Netbeans default path is built in and has to be overridden by going to     -->
+    
+    <property name="javac.verbose"           value="-verbose"/>
+    <property name="java.classes.dir"        value="${java.dir}/classes"/>
+    <property name="java.examples.dir"       value="${java.dir}/examples"/>
+    <property name="java.jars.dir"           value="${java.dir}/jars"/>
+    <property name="java.lib.dir"            location="${java.dir}/lib"/>
+    <property name="java.src.dir"            value="${java.dir}/src"/>
+    <property name="content.examples.src.dir"            value="../../../../../content/examples"/>
+			
+    <property name="java.coderextreme.dir"       value="${java.src.dir}/net/coderextreme"/>
+    <property name="nashorn.dir"             value="${java.dir}/nashorn"/>
+    <property name="nashorn.examples.dir"       value="${nashorn.dir}/examples"/>
+    <property name="java.jars.dir"           value="${java.dir}/jars"/>
+    <property name="src.org.web3d.x3d.jsail" value="${java.src.dir}/org/web3d/x3d/jsail"/><!-- concretes  -->
+    <property name="src.org.web3d.x3d.sai"   value="${java.src.dir}/org/web3d/x3d/sai"/>  <!-- interfaces -->
+    <property name="jsai.classes.archive.jar.name" value="X3DJSAIL.4.0.classes.jar"/>
+    <property name=   "jsai.full.archive.jar.name" value="X3DJSAIL.4.0.full.jar"/>
+    <property name="archive.path"                  location="."/>
+    <property name="archive.name"                  value="_archiveName_"/>
+    <property name=   "saxon.jar.name" value="saxon9he.jar"/>
+    <property name=   "node" value="node.exe"/>
+
+    <property name="result.dir" location="."/>
+    <property name="result.classes.instr.dir" location="${result.dir}/classes-instr"/>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        <classpath path="~/Downloads/jacoco-0.8.3/lib/jacocoant.jar"/>
+    </taskdef>
+
+    <target name="all">
+	<antcall target="coverage"/>
+	<antcall target="instrument"/>
+    </target>
+
+    <target name="install.dependencies" description="Finish installation dependencies, note administrator permissions are likely required">
+        <exec executable="java">
+            <arg value="--version"/>
+        </exec>
+    </target>
+
+    <target name="compile" xmlns:jacoco="antlib:org.jacoco.ant">
+	    <!--
+	<javac srcdir="${content.examples.src.dir}" failOnError="false">
+	</javac>
+	    -->
+	<javac srcdir="." classpath="../../../jars/X3DJSAIL.4.0.full.jar">
+	</javac>
+	<jar destfile="main.jar">
+	    <manifest>
+        	<attribute name="Main-Class" value="Main.class"/>
+    	    </manifest>
+    	    <path>
+		    <fileset dir=".">
+				<include name="**/*.class"/>
+			</fileset>
+		    <fileset dir="${content.examples.src.dir}">
+				<include name="**/X3dForWebAuthors/**/*.class"/>
+			</fileset>
+    	    </path>
+	</jar>
+    </target>
+    <target name="coverage" depends="compile" xmlns:jacoco="antlib:org.jacoco.ant">
+	    <jacoco:coverage destfile="jacoco.exec">
+		    <java classname="Main" fork="true">
+			    <arg value="main.jar"/>
+			    <classpath path="main.jar;../../../jars/X3DJSAIL.4.0.full.jar"/>
+		    </java>
+	    </jacoco:coverage>
+    </target>
+    <target name="instrument" depends="compile" xmlns:jacoco="antlib:org.jacoco.ant">
+	<jacoco:instrument destdir="${result.classes.instr.dir}">
+    	    <path>
+		<fileset dir="${content.examples.src.dir}">
+				<include name="**/X3dForWebAuthors/**/*.class"/>
+		</fileset>
+	</path>
+	</jacoco:instrument>
+    </target>
+</project>

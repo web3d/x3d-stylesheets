@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+
+<!--
+  Copyright (c) 2000-2019 held by the author(s).  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer
+      in the documentation and/or other materials provided with the
+      distribution.
+    * Neither the names of the Naval Postgraduate School (NPS)
+      Modeling Virtual Environments and Simulation (MOVES) Institute
+      (http://www.nps.edu and http://www.MovesInstitute.org)
+      nor the names of its contributors may be used to endorse or
+      promote products derived from this software without specific
+      prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<project name="X3D Node SAI Library" default="default" basedir=".">
+    <description>Builds, tests, and runs the X3D Node SAI Library project.</description>
+	
+    <property name="java.dir"                 value=".."/>
+
+    <!-- java jvmarg parameters ignored on server unless forked -->
+    <property name="fork"                value="true"/>    <!-- note that Netbeans default path is built in and has to be overridden by going to     -->
+    
+	<!-- Netbeans > Tools > Options > Java > Ant                                              -->
+    <!-- and then pointing to C:\apache-ant-1.9.3 (or somesuch locally installed directory)   -->
+
+    <!-- ANT Contrib archive at http://sourceforge.net/projects/ant-contrib/files    (v1.0b3) -->
+    <!-- must have ant-contrib-1.0b3.jar in ANT_HOME/lib (or else specify path)               -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+    
+    <!-- jslint4java: a Java wrapper around Douglas Crockford's jslint tool. -->
+    <!-- https://code.google.com/p/jslint4java -->
+    <!-- http://docs.jslint4java.googlecode.com/git/2.0.5/ant.html -->
+	<!-- http://happygiraffe.github.io/jslint4java/cli.html -->
+    <!-- http://kaatz-media.com/2011/10/06/uberprufen-von-javascript-dateien-ant-und-jslint-jenkins-using-ant-on-jenkins-for-jslint -->
+    <!-- TODO bug report: https://code.google.com/p/jslint4java/issues/detail?id=101 -->
+    <property name="jslint.jar"     value="${java.dir}/../lib/jslint4java-2.0.5.jar"/>
+    <taskdef name="jslint" 
+        classname="com.googlecode.jslint4java.ant.JSLintTask"
+        classpath="${jslint.jar}" />
+    <property name="jslint.options" value="white"/>
+    <!-- unused options: ass,bitwise,browser,closure,continue,debug,devel,eqeq,es5,evil,forin,indent,maxerr,maxlen,newcap,node,nomen,passfail,plusplus,predef,properties,regexp,rhino,sloppy,stupid,sub,todo,unparam,vars,warnings, -->
+
+	<!-- https://github.com/fge/json-schema-validator -->
+	<!-- http://stackoverflow.com/questions/22867521/how-to-run-json-schema-validator-from-the-command-line -->
+	<!-- fix double-hyphen switch when running on command line: -->
+	<!-- java -jar lib/json-schema-validator-2.2.6-lib.jar - -help -->
+	<!-- java -jar lib/json-schema-validator-2.2.6-lib.jar - -syntax ../../specifications/x3d-4.0-JSONSchema.json -->
+	<!-- java -jar lib/json-schema-validator-2.2.6-lib.jar ../../specifications/x3d-4.0-JSONSchema.json test/HelloWorld.json -->
+	<property name="json-schema-validator.jar"     value="${java.dir}/../lib/json-schema-validator-2.2.6-lib.jar"/>
+
+    <!-- http://stackoverflow.com/questions/919692/how-to-execute-xslt-2-0-with-ant -->
+    <property name="saxon.dir"               value="${java.dir}/lib" description="relative path"/>
+    <property name="saxon.jar"               value="saxon9he.jar"/>
+
+    <!-- http://openexi.sourceforge.net -->
+    <!-- https://sourceforge.net/projects/openexi/files -->
+    <property name="openexi.dir"             value="${java.dir}/lib" description="relative path"/>
+	<property name="openexi.jar"             value="nagasena.jar"/>
+    
+    <!-- https://exificient.github.io/java -->
+    <!-- https://exificient.github.io/java/exificient-gui-jar-with-dependencies.jar -->
+    <property name="exificient.dir"          value="${java.dir}/lib" description="relative path"/>
+    <property name="exificient.jar"          value="exificient-gui-jar-with-dependencies.jar"/>
+
+    <property name="javax.json.dir"          value="${java.dir}/lib" description="relative path"/>
+    <property name="javax.json.jar"          value="javax.json-api-1.0.jar"/>
+
+    <!-- ensure backwards compatibility to specified version of Java -->
+    <property name="java.source"                value="1.8"/>
+
+    <property name="javac.verbose"              value="true"/>
+    <property name="java.classes.dir"        value="${java.dir}/classes"/>
+    <property name="java.examples.dir"       value="${java.dir}/examples"/>
+    <property name="java.jars.dir"           value="${java.dir}/jars"/>
+    <property name="java.lib.dir"         location="${java.dir}/lib"/>
+    <property name="java.src.dir"            value="${java.dir}/src"/>
+    <property name="java.coderextreme.dir"   value="${java.src.dir}/net/coderextreme"/>
+    <property name="node.dir"             value="${java.dir}/node"/>
+    <property name="node.examples.dir"    value="${node.dir}/examples"/>
+    <property name="java.jars.dir"           value="${java.dir}/jars"/>
+    <property name="src.org.web3d.x3d.jsail" value="${java.src.dir}/org/web3d/x3d/jsail"/><!-- concretes  -->
+    <property name="src.org.web3d.x3d.sai"   value="${java.src.dir}/org/web3d/x3d/sai"/>  <!-- interfaces -->
+    <property name="jsai.classes.archive.jar.name" value="X3DJSAIL.4.0.classes.jar"/>
+    <property name=   "jsai.full.archive.jar.name" value="X3DJSAIL.4.0.full.jar"/>
+	
+    <target name="all" depends="test.node"/>
+
+    <target name="test.node" description="Test Node output from X3DJSAIL">
+		<echo message="Build node modules:"/>
+		<exec executable="npm">
+			<arg value="install"/>
+		</exec>
+		<echo message="Compile:"/>
+        <!-- local developer modification checks, apparently -->
+		<javac  srcdir="${java.examples.dir}"
+                source="${java.source}"
+                target="${java.source}"
+			   destdir="${java.classes.dir}"
+			 classpath="${java.jars.dir}/${jsai.full.archive.jar.name};."
+			     debug="on"
+			   verbose="${javac.verbose}"
+			   includeantruntime="false" fork="${fork}">
+		</javac>
+		<javac srcdir ="${java.coderextreme.dir}"
+                source="${java.source}"
+                target="${java.source}"
+			   destdir="${java.classes.dir}"
+	         classpath="${javax.json.dir}/${javax.json.jar}"
+			     debug="on"
+			   verbose="${javac.verbose}"
+			   includeantruntime="false" fork="${fork}">
+		</javac>
+        <!-- Dev testing: copying of originals, reconversion and then comparison of files -->
+		<echo message="Copy:"/>
+		<copy file="${java.examples.dir}/HelloWorldProgramOutput.x3d"  tofile="examples/HelloWorldProgramOutput.x3d"  overwrite="true" verbose="true"/>
+		<copy file="${java.examples.dir}/HelloWorldProgramOutput.json" tofile="examples/HelloWorldProgramOutput.json" overwrite="true" verbose="true"/>
+		<echo message="==========="/>
+		<echo message="Run test 1:"/>
+		<echo   message="org.web3d.x3d.jsail.CommandLine examples/HelloWorldProgramOutput.x3d -tojs -toFile examples/HelloWorldProgramOutput.Node.js"/>
+        <java classname="org.web3d.x3d.jsail.CommandLine" classpath="${java.classes.dir};${java.jars.dir}/${jsai.full.archive.jar.name}" fork="${fork}">
+			<!-- use relative paths, node invocation as part of -tojs seems finicky about paths -->
+			<arg value="examples/HelloWorldProgramOutput.x3d"/>
+			<arg value="-tojs"/>
+			<arg value="-toFile"/>
+			<arg value="examples/HelloWorldProgramOutput.Node.js"/>
+		</java>
+        <java classname="org.web3d.x3d.jsail.CommandLine" classpath="${java.classes.dir};${java.jars.dir}/${jsai.full.archive.jar.name}" fork="${fork}">
+			<!-- use relative paths, node invocation as part of -tojs seems finicky about paths -->
+			<arg value="examples/Json.x3d"/>
+			<arg value="-tojs"/>
+			<arg value="-toFile"/>
+			<arg value="examples/Json.js"/>
+		</java>
+        <java classname="org.web3d.x3d.jsail.CommandLine" classpath="${java.classes.dir};${java.jars.dir}/${jsai.full.archive.jar.name}" fork="${fork}">
+			<!-- use relative paths, node invocation as part of -tojs seems finicky about paths -->
+			<arg value="examples/Quotes.x3d"/>
+			<arg value="-tojs"/>
+			<arg value="-toFile"/>
+			<arg value="examples/Quotes.js"/>
+		</java>
+        <echo message="==========="/>
+		<echo message="Run test 2:"/>
+		<echo   message="org.web3d.x3d.jsail.CommandLine examples/HelloWorldProgramOutput.x3d -toJSON -toFile examples/HelloWorldProgramOutput.Java.json"/>
+		<java classname="org.web3d.x3d.jsail.CommandLine" classpath="${java.classes.dir};${java.jars.dir}/${jsai.full.archive.jar.name}" fork="${fork}">
+			<arg value="examples/HelloWorldProgramOutput.x3d"/>
+			<arg value="-toJSON"/>
+			<arg value="-toFile"/>
+			<arg value="examples/HelloWorldProgramOutput.Java.json"/>
+		</java>
+		<echo message="==========="/>
+		<echo message="Run test 3:"/>
+		<echo   message="org.web3d.x3d.jsail.CommandLine examples/HelloWorldProgramOutput.x3d -toX3D -toFile examples/HelloWorldProgramOutput.Java.x3d"/>
+		<java classname="org.web3d.x3d.jsail.CommandLine" classpath="${java.classes.dir};${java.jars.dir}/${jsai.full.archive.jar.name}" fork="${fork}">
+			<arg value="examples/HelloWorldProgramOutput.x3d"/>
+			<arg value="-toX3D"/>
+			<arg value="-toFile"/>
+			<arg value="examples/HelloWorldProgramOutput.Java.x3d"/>
+		</java>
+		<echo message="==========================================="/>
+		<echo message="HelloWorldProgramOutput.Java.x3d"/>
+		<xmlvalidate lenient="yes" warn="yes" file="examples/HelloWorldProgramOutput.x3d"/>
+		<xmlvalidate lenient="no"  warn="yes" file="examples/HelloWorldProgramOutput.Java.x3d"/>
+		<condition property="Java.x3d.match" value="true">
+			<filesmatch file1="examples/HelloWorldProgramOutput.x3d"
+				        file2="examples/HelloWorldProgramOutput.Java.x3d"/>
+		</condition>
+		<!-- otherwise --><property name="Java.x3d.match" value="false"/>
+		<echo message="matches HelloWorldProgramOutput.x3d: ${Java.x3d.match}"/>
+		<echo message="==========================================="/>
+		<echo message="==========================================="/>
+		<echo message="HelloWorldProgramOutput.Java.json"/>
+		<condition property="Java.json.match" value="true">
+			<filesmatch file1="examples/HelloWorldProgramOutput.json"
+				        file2="examples/HelloWorldProgramOutput.Java.json"/>
+		</condition>
+		<!-- otherwise --><property name="Java.json.match" value="false"/>
+		<echo message="matches HelloWorldProgramOutput.json: ${Java.json.match}"/>
+		<echo message="==========================================="/>
+		<echo message="script:"/>
+		<exec executable="node">
+			<arg value="examples/HelloWorldProgramOutput.Node.js"/>
+		</exec>
+		<echo message="==========================================="/>
+		<echo message="HelloWorldProgramOutput.Java.x3d"/>
+		<condition property="Node.x3d.match" value="true">
+			<filesmatch file1="examples/HelloWorldProgramOutput.Node.js.new.x3d"
+				file2="examples/HelloWorldProgramOutput.Java.x3d"/>
+		</condition>
+		<!-- otherwise --><property name="Node.x3d.match" value="false"/>
+		<echo message="matches HelloWorldProgramOutput.Node.js.new.x3d: ${Node.x3d.match}"/>
+		<echo message="==========================================="/>
+		<echo message="==========================================="/>
+		<echo message="HelloWorldProgramOutput.Java.json"/>
+		<condition property="Node.json.match" value="true">
+			<filesmatch file1="examples/HelloWorldProgramOutput.Node.js.new.json"
+				file2="examples/HelloWorldProgramOutput.Java.json"/>
+		</condition>
+		<!-- otherwise --><property name="Node.json.match" value="false"/>
+		<echo message="matches HelloWorldProgramOutput.Node.js.new.json: ${Node.json.match}"/>
+		<echo message="==========================================="/>
+		<echo message="Run test 4"/>
+		<echo message="node examples/Node.js"/>
+		<exec executable="node">
+			<arg value="examples/Node.js"/>
+		</exec>
+		<echo message="==========================================="/>
+		<echo message="Run test 5"/>
+		<echo message="HelloWorldProgramOutput.x3d"/>
+		<condition property="Node.x3d.match" value="true">
+			<filesmatch file1="examples/HelloWorldProgramOutput.x3d"
+				file2="examples/Node.x3d"/>
+		</condition>
+		<!-- otherwise --><property name="Node.x3d.match" value="false"/>
+		<echo message="matches Node.x3d: ${Node.x3d.match}"/>
+		<echo message="==========================================="/>
+		<echo message="==========================================="/>
+		<echo message="HelloWorldProgramOutput.x3d"/>
+		<condition property="Node0.x3d.match" value="true">
+			<filesmatch file1="examples/HelloWorldProgramOutput.x3d"
+				file2="examples/Node0.x3d"/>
+		</condition>
+		<!-- otherwise --><property name="Node0.x3d.match" value="false"/>
+		<echo message="matches Node0.x3d: ${Node0.x3d.match}"/>
+		<echo message="==========================================="/>
+		<echo message="node examples/Json.js"/>
+		<exec executable="node">
+			<arg value="examples/Json.js"/>
+		</exec>
+		<echo message="==========================================="/>
+		<echo message="HelloWorldProgramOutput.x3d"/>
+		<condition property="Json.x3d.match" value="true">
+			<filesmatch file1="examples/HelloWorldProgramOutput.x3d"
+				file2="examples/Json.x3d"/>
+		</condition>
+		<!-- otherwise --><property name="Json.x3d.match" value="false"/>
+		<echo message="matches Json.x3d: ${Json.x3d.match}"/>
+		<echo message="==========================================="/>
+		<echo message="HelloWorldProgramOutput.json"/>
+		<condition property="Json.json.match" value="true">
+			<filesmatch file1="examples/HelloWorldProgramOutput.json"
+				file2="examples/Json.json"/>
+		</condition>
+		<!-- otherwise --><property name="Json.json.match" value="false"/>
+		<echo message="matches Json.json: ${Json.json.match}"/>
+    </target>
+	
+</project>

@@ -1,0 +1,225 @@
+{
+    "X3D":,
+    {
+        "encoding":"UTF-8",
+        "$id":   "https://www.web3d.org/specifications/x3d-4.0-JSONSchema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "@version":"4.0",
+        "@profile":"Full",
+    "head":
+    {
+        "component":
+        {
+      {
+        "@level":"2",
+        "@name":"Grouping"
+      }
+    },
+    { "#comment" : "hello persistent comment in head children" }
+        "unit":
+        {
+      {
+        "@category":"length",
+        "@conversionFactor":"0.001",
+        "@name":"MILLIMETER"
+      }
+    },
+        "meta":
+        {
+      {
+        "@content":"name-value pair & solitary-ampersand test",
+        "@name":"description"
+      }
+    },
+        "meta":
+        {
+      {
+        "@content":"diagnostic test 1",
+        "@name":"info"
+      }
+    },
+        "meta":
+        {
+      {
+        "@content":"diagnostic test 2",
+        "@name":"hint"
+      }
+    },
+        "meta":
+        {
+      {
+        "@content":"diagnostic test 3",
+        "@name":"warning"
+      }
+    },
+        "meta":
+        {
+      {
+        "@content":"diagnostic test 4",
+        "@name":"error"
+      }
+    },
+    }    "Scene":
+    {
+        "WorldInfo":
+        {
+      {
+        "@DEF":"TestWorldInfo",
+        "@title":"modelTest sample scene"
+      }
+    }
+        "WorldInfo":
+        {
+      {
+        "@USE":"TestWorldInfo"
+      }
+    }
+    { "#comment" : "hello persistent comment in Scene children" }
+        "NavigationInfo":
+        {
+      {
+        "@type":""EXAMINE" "FLY" "ANY""
+      }
+    },
+        "Group":
+        {
+      {
+        "@DEF":"EmptyGroup",
+        "@bboxSize":"1 2 3"
+      }
+    },
+        "Transform":
+        {
+      {
+        "@translation":"0 2 0"
+      }
+            "Shape":
+            {
+                "Text":
+                {
+      {
+        "@string":""Smoke" "Test""
+      }
+                    "FontStyle":
+                    {
+      {
+        "@style":"BOLD"
+      }
+    },
+                }            }      { "#comment" : "hello persistent comment in Transform children" }
+        }        "Shape":
+        {
+      {
+        "@DEF":"TestShape"
+      }
+            "Appearance":
+            {
+      {
+        "@DEF":"TestAppearance"
+      }
+                "Material":
+                {
+      {
+        "@DEF":"TestMaterial",
+        "@diffuseColor":"0.4 0.6 0.8",
+        "@transparency":"0.5"
+      }
+    },
+            }            "Box":
+            {
+      {
+        "@DEF":"TestBox"
+      }
+    },
+        }    { "#comment" : "note that comment objects are persistent and valid children nodes" }
+        "Inline":
+        {
+      {
+        "@url":""HelloWorld.x3d" "https://www.web3d.org/x3d/content/examples/HelloWorld.x3d""
+      }
+    },
+        "ROUTE":
+        {
+      {
+        "@fromField":"bboxSize",
+        "@fromNode":"TestGroup",
+        "@toField":"size",
+        "@toNode":"TestBox"
+      }
+    },
+        "ProtoDeclare":
+        {
+      {
+        "@name":"SmokeProto"
+      }
+            "ProtoInterface":
+            {
+                "field":
+                {
+      {
+        "@accessType":"inputOutput",
+        "@appinfo":"offset 1",
+        "@name":"offset1",
+        "@type":"SFVec3f",
+        "@value":"(0, 0, -5)"
+      }
+    },
+                "field":
+                {
+      {
+        "@accessType":"inputOutput",
+        "@appinfo":"offset 2",
+        "@name":"offset2",
+        "@type":"SFFloat",
+        "@value":"0.5"
+      }
+    },
+            }            "ProtoBody":
+            {
+                "Material":
+                {
+      {
+        "@ambientIntensity":"0.254777",
+        "@diffuseColor":"0.685208 0.134679 0.332385",
+        "@shininess":"0.071429",
+        "@specularColor":"0.122449 0.050035 0.050035"
+      }
+                    "IS":
+                    {
+                        "connect":
+                        {
+      {
+        "@nodeField":"shininess",
+        "@protoField":"offset2"
+      }
+    },
+                    }                }            }        }        "ProtoInstance":
+        {
+      {
+        "@name":"SmokeProto"
+      }
+            "fieldValue":
+            {
+      {
+        "@name":"offset1",
+        "@value":"(0, 7, 8)"
+      }
+    },
+            "fieldValue":
+            {
+      {
+        "@name":"offset2",
+        "@value":"0.78"
+      }
+    },
+        }        "Script":
+        {
+      {
+        "@DEF":"SmokeScript",
+        "@sourceCode":"
+ecmascript:
+// testing multi-line text block support for Script sourceCode field
+"
+      }
+    },
+    }}

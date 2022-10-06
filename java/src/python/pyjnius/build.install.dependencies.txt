@@ -1,0 +1,105 @@
+[Note that bash window needed to be explicitly run with administrator privileges in order for this installation to work under Windows 10.]
+
+localadmin@DESKTOP-2S09UKA /cygdrive/c/x3d-code/www.web3d.org/x3d/stylesheets/java/src/python/pyjinus
+$ ant install.dependencies
+Buildfile: C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjinus\build.xml
+
+install.dependencies:
+     [echo] node.js and npm are required
+     [echo] https://nodejs.org/en
+     [echo] https://docs.npmjs.com/cli/install
+     [exec] audited 34 packages in 0.929s
+     [exec] found 0 vulnerabilities
+     [exec]
+     [echo] Pyjnius is a Python library for accessing Java classes.
+     [echo] https://pyjnius.readthedocs.io/en/latest/installation.html
+     [echo] Alert: use Pyjnius page to confirm JAVA_HOME and PATH requirements
+     [exec]     C:/Program Files/Java/jdk1.8.0_192
+     [exec]     WARNING: Not able to assign machine() = AMD64 to a cpu value!
+     [exec]              Using cpu = 'i386' instead!
+     [exec]     JDK_HOME: C:/Program Files/Java/jdk1.8.0_192
+     [exec]
+     [exec]     JRE_HOME: C:/Program Files/Java/jdk1.8.0_192\jre
+     [exec]
+     [exec]     warning: [options] bootstrap class path not set in conjunction with -source 1.6
+     [exec]     1 warning
+     [exec] Python 3.7.1
+     [echo] Alert: note administrator permissions are likely required
+     [exec] Collecting pip
+     [exec]   Using cached https://files.pythonhosted.org/packages/c2/d7/90f34cb0d83a6c5631cf71dfe64cc1054598c843a92b400e55675cc2ac37/pip-18.1-py2.py3-none-any.whl
+     [exec] Collecting setuptools
+     [exec]   Using cached https://files.pythonhosted.org/packages/37/06/754589caf971b0d2d48f151c2586f62902d93dc908e2fd9b9b9f6aa3c9dd/setuptools-40.6.3-py2.py3-none-any.whl
+     [exec] Installing collected packages: pip, setuptools
+     [exec]   Found existing installation: pip 10.0.1
+     [exec]     Uninstalling pip-10.0.1:
+     [exec]       Successfully uninstalled pip-10.0.1
+     [exec]   Found existing installation: setuptools 39.0.1
+     [exec]     Uninstalling setuptools-39.0.1:
+     [exec]       Successfully uninstalled setuptools-39.0.1
+     [exec] Successfully installed pip-18.1 setuptools-40.6.3
+     [exec] Collecting cython
+     [exec]   Using cached https://files.pythonhosted.org/packages/de/c8/daeef2f83ae402fc3c3eef4295e07fc46b267e5f12c7a8ee05b685de5c59/Cython-0.29.1-cp37-cp37m-win_amd64.whl
+     [exec] Installing collected packages: cython
+     [exec] Successfully installed cython-0.29.1
+     [exec] Collecting pyjnius
+     [exec]   Using cached https://files.pythonhosted.org/packages/da/c3/5e65aa78108811ad003a70c364f20964af7d5734785f2d4b71b199c84c6c/pyjnius-1.1.4.tar.gz
+     [exec] Collecting six>=1.7.0 (from pyjnius)
+     [exec]   Downloading https://files.pythonhosted.org/packages/73/fb/00a976f728d0d1fecfe898238ce23f502a721c0ac0ecfedb80e0d88c64e9/six-1.12.0-py2.py3-none-any.whl
+     [exec] Requirement already satisfied, skipping upgrade: cython in c:\program files\python37\lib\site-packages (from pyjnius) (0.29.1)
+     [exec] Installing collected packages: six, pyjnius
+     [exec]   Running setup.py install for pyjnius: started
+     [exec]     Running setup.py install for pyjnius: finished with status 'error'
+     [exec]     Complete output from command "C:\Program Files\Python37\python.exe" -u -c "import setuptools, tokenize;__file__='C:\\cygwin64\\tmp\\pip-install-iam2u3dt\\pyjnius\\setup.py';f=getattr(tokenize, 'open', open)(__file__);code=f.read().replace('\r\n', '\n');f.close();exec(compile(code, __file__, 'exec'))" install --record C:\cygwin64\tmp\pip-record-13wcvek3\install-record.txt --single-version-externally-managed --compile:
+     [exec]     C:/Program Files/Java/jdk1.8.0_192
+     [exec]     WARNING: Not able to assign machine() = AMD64 to a cpu value!
+     [exec]              Using cpu = 'i386' instead!
+     [exec]     JDK_HOME: C:/Program Files/Java/jdk1.8.0_192
+     [exec]
+     [exec]     JRE_HOME: C:/Program Files/Java/jdk1.8.0_192\jre
+     [exec]
+     [exec]     warning: [options] bootstrap class path not set in conjunction with -source 1.6
+     [exec]     1 warning
+     [exec]     running install
+     [exec]     running build
+     [exec]     running build_py
+     [exec]     creating build
+     [exec]     creating build\lib.win-amd64-3.7
+     [exec]     copying jnius_config.py -> build\lib.win-amd64-3.7
+     [exec]     creating build\lib.win-amd64-3.7\jnius
+     [exec]     copying jnius\reflect.py -> build\lib.win-amd64-3.7\jnius
+     [exec]     copying jnius\signatures.py -> build\lib.win-amd64-3.7\jnius
+     [exec]     copying jnius\__init__.py -> build\lib.win-amd64-3.7\jnius
+     [exec]     creating build\lib.win-amd64-3.7\jnius\src
+     [exec]     creating build\lib.win-amd64-3.7\jnius\src\org
+     [exec]     creating build\lib.win-amd64-3.7\jnius\src\org\jnius
+     [exec]     copying jnius\src\org\jnius\NativeInvocationHandler.class -> build\lib.win-amd64-3.7\jnius\src\org\jnius
+     [exec]     copying jnius\src\org\jnius\NativeInvocationHandler.java -> build\lib.win-amd64-3.7\jnius\src\org\jnius
+     [exec]     running build_ext
+     [exec]     cythoning jnius\jnius.pyx to jnius\jnius.c
+     [exec]     C:\Program Files\Python37\lib\site-packages\Cython\Compiler\Main.py:367: FutureWarning: Cython directive 'language_level' not set, using 2 for now (Py2). This will change in a later release! File: C:\cygwin64\tmp\pip-install-iam2u3dt\pyjnius\jnius\jnius.pyx
+     [exec]       tree = Parsing.p_module(s, pxd, full_module_name)
+     [exec]     building 'jnius' extension
+     [exec]     error: Microsoft Visual C++ 14.0 is required. Get it with "Microsoft Visual C++ Build Tools": https://visualstudio.microsoft.com/downloads/
+     [exec]
+     [exec]     ----------------------------------------
+     [exec] Command ""C:\Program Files\Python37\python.exe" -u -c "import setuptools, tokenize;__file__='C:\\cygwin64\\tmp\\pip-install-iam2u3dt\\pyjnius\\setup.py';f=getattr(tokenize, 'open', open)(__file__);code=f.read().replace('\r\n', '\n');f.close();exec(compile(code, __file__, 'exec'))" install --record C:\cygwin64\tmp\pip-record-13wcvek3\install-record.txt --single-version-externally-managed --compile" failed with error code 1 in C:\cygwin64\tmp\pip-install-iam2u3dt\pyjnius\
+     [exec] Result: 1
+     [echo] bs4 Beautiful Soup is a Python library for pulling data out of HTML and XML files
+     [echo] https://www.crummy.com/software/BeautifulSoup/bs4/doc
+     [exec] Collecting bs4
+     [exec]   Using cached https://files.pythonhosted.org/packages/10/ed/7e8b97591f6f456174139ec089c769f89a94a1a4025fe967691de971f314/bs4-0.0.1.tar.gz
+     [exec] Collecting beautifulsoup4 (from bs4)
+     [exec]   Using cached https://files.pythonhosted.org/packages/21/0a/47fdf541c97fd9b6a610cb5fd518175308a7cc60569962e776ac52420387/beautifulsoup4-4.6.3-py3-none-any.whl
+     [exec] Installing collected packages: beautifulsoup4, bs4
+     [exec]   Running setup.py install for bs4: started
+     [exec]     Running setup.py install for bs4: finished with status 'done'
+     [exec] Successfully installed beautifulsoup4-4.6.3 bs4-0.0.1
+     [echo] lxml - XML and HTML with Python
+     [echo] https://lxml.de
+     [exec] Collecting lxml
+     [exec]   Using cached https://files.pythonhosted.org/packages/d7/9d/1aa28aa9d293a816baec6c37328d6465b722b2ff3f4d1e93ed56e87813ee/lxml-4.2.5-cp37-cp37m-win_amd64.whl
+     [exec] Installing collected packages: lxml
+     [exec] Successfully installed lxml-4.2.5
+
+BUILD SUCCESSFUL
+Total time: 29 seconds

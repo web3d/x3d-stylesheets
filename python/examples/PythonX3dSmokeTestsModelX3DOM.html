@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!-- =================================================================== -->
+<!-- embedded X3D scene appears after html/head/script and style entries -->
+<!-- =================================================================== -->
+<html>
+   <head>
+      <title></title>
+      <meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge"/>
+      <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Numbered X3DOM release versions: https://doc.x3dom.org/download -->
+<!-- Developer X3DOM release version: https://doc.x3dom.org/download/dev -->
+<link rel="stylesheet"
+            type="text/css"
+            href="https://x3dom.org/release/x3dom.css"/>
+      <script type="text/javascript" src="https://x3dom.org/release/x3dom-full.js"/>
+      <meta name="warning"
+            content="Webfonts must be loaded prior to using Text node in X3D scene... see https://x3dom.org/x3dom/example/x3dom_text.html"/>
+      <!-- X3DOM needs Web Fonts when an X3D Text node is included -->
+      <!-- adapted from https://x3dom.org/x3dom/example/x3dom_text.html and http://web.mit.edu/jmorzins/www/fonts.html -->
+      <style type="text/css">
+/* ============================================================================= */
+@font-face {
+  font-family: 'SERIF'; /* default original */
+  font-style: normal;
+  font-weight: 700;
+  src: local('Roman'), url('Roman.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'SERIF'; /* default alternate */
+  font-style: normal;
+  font-weight: 700;
+  src: local('Times New Roman'), local('TimesNewRoman'), url('Times New Roman.ttf') format('truetype');
+}
+/* ============================================================================= */
+@font-face {
+  font-family: 'SANS'; /* default original */
+  font-style: normal;
+  font-weight: 400;
+  src: local('Arial'), url('Arial.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'SANS'; /* default alternate */
+  font-style: normal;
+  font-weight: 400;
+  src: local('Helvetica'), url('Helvetica.ttf') format('truetype');
+}
+/* ============================================================================= */
+@font-face {
+  font-family: 'TYPEWRITER'; /* default original */
+  font-style: normal;
+  font-weight: 900;
+  src: local('Courier'), url('Courier.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'TYPEWRITER'; /* default alternate */
+  font-style: normal;
+  font-weight: 900;
+  src: local('Courier New'), url('Courier New.ttf') format('truetype');
+}
+/* ============================================================================= */
+</style>
+   </head>
+   <body><?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 4.0//EN" "https://www.web3d.org/specifications/x3d-4.0.dtd">
+<X3D profile='Full' version='4.0' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='https://www.web3d.org/specifications/x3d-4.0.xsd'>
+  <head>
+    <component level='2' name='Grouping'></component>
+    <!-- hello persistent comment in head children -->
+    <unit category='length' conversionFactor='0.001' name='MILLIMETER'></unit>
+    <meta content='name-value pair &amp; solitary-ampersand test' name='description'></meta>
+    <meta content='diagnostic test 1' name='info'></meta>
+    <meta content='diagnostic test 2' name='hint'></meta>
+    <meta content='diagnostic test 3' name='warning'></meta>
+    <meta content='diagnostic test 4' name='error'></meta>
+  </head>
+  <Scene>
+    <WorldInfo DEF='TestWorldInfo' title='modelTest sample scene'></WorldInfo>
+    <WorldInfo USE='TestWorldInfo'></WorldInfo>
+    <!-- hello persistent comment in Scene children -->
+    <NavigationInfo type='"EXAMINE" "FLY" "ANY"'></NavigationInfo>
+    <Group DEF='EmptyGroup' bboxSize='1 2 3'></Group>
+    <Transform translation='0 2 0'>
+      <Shape>
+        <Text string='"Smoke" "Test"'>
+          <FontStyle style='BOLD'></FontStyle>
+        </Text>
+      </Shape>
+      <!-- hello persistent comment in Transform children -->
+    </Transform>
+    <Shape DEF='TestShape'>
+      <Appearance DEF='TestAppearance'>
+        <Material DEF='TestMaterial' diffuseColor='0.4 0.6 0.8' transparency='0.5'></Material>
+      </Appearance>
+      <Box DEF='TestBox'></Box>
+    </Shape>
+    <!-- note that comment objects are persistent and valid children nodes -->
+    <Inline url='"HelloWorld.x3d" "https://www.web3d.org/x3d/content/examples/HelloWorld.x3d"'></Inline>
+    <ROUTE fromField='bboxSize' fromNode='TestGroup' toField='size' toNode='TestBox'></ROUTE>
+    <ProtoDeclare name='SmokeProto'>
+      <ProtoInterface>
+        <field accessType='inputOutput' appinfo='offset 1' name='offset1' type='SFVec3f' value='0 0 -5'></field>
+        <field accessType='inputOutput' appinfo='offset 2' name='offset2' type='SFFloat' value='0.5'></field>
+      </ProtoInterface>
+      <ProtoBody>
+        <Material ambientIntensity='0.254777' diffuseColor='0.685208 0.134679 0.332385' shininess='0.071429' specularColor='0.122449 0.050035 0.050035'>
+          <IS>
+            <connect nodeField='shininess' protoField='offset2'></connect>
+          </IS>
+        </Material>
+      </ProtoBody>
+    </ProtoDeclare>
+    <ProtoInstance name='SmokeProto'>
+      <fieldValue name='offset1' value='0 7 8'></fieldValue>
+      <fieldValue name='offset2' value='0.78'></fieldValue>
+    </ProtoInstance>
+    <Script DEF='SmokeScript'>
+    <![CDATA[
+ecmascript:
+// testing multi-line text block support for Script sourceCode field
+]]>
+    </Script>
+  </Scene>
+</X3D>
+
+   </body>
+</html>

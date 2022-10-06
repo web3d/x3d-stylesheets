@@ -1,0 +1,86 @@
+Deploying the Python x3d package
+================================
+
+Reference:
+https://packaging.python.org/tutorials/packaging-projects/#generating-distribution-archives
+
+# specific steps for uploading the live distribution (not the test server)
+
+~$ python --version
+~$ pip install --upgrade pip                                    # make sure latest pip
+~$ python -m pip install --user --upgrade setuptools wheel      # make sure latest setuptools
+~$ python -m pip install --user --upgrade twine                 # make sure latest twine
+
+# ~$ cd ------------ # to package directory containing dist/ subdirectory
+
+# move previous 0.0.x versions to separate directory (not a subdirectory) e.g. ../dist.archive/
+
+# edit setup.py to ensure version number is incremented (e.g. 0.0.2)
+
+# requires userID & password
+~$ python setup.py sdist bdist_wheel           # build distribution package
+~$ python -m twine upload dist/*               # live upload
+
+# verification
+~$ cd ~                                        # leave x3d.py package directory to verify upload
+~$ python -m pip install --user --upgrade x3d  # install live package into local distro
+~$ pip show x3d                                # provide package details
+
+===========================================================================================
+TODO
+- confirm installation both for sysadmin and regular user
+
+===========================================================================================
+log follows, typically must be localadmin to have sufficient permissions
+===========================================================================================
+
+C:\x3d-code\www.web3d.org\x3d>python --version
+Python 3.7.4
+
+C:\x3d-code\www.web3d.org\x3d>python -m pip install --user --upgrade setuptools wheel
+Requirement already up-to-date: setuptools in c:\program files\python37\lib\site-packages (41.0.1)
+Requirement already up-to-date: wheel in c:\users\localadmin\appdata\roaming\python\python37\site-packages (0.33.4)
+
+C:\x3d-code\www.web3d.org\x3d>pip install --upgrade pip
+Requirement already up-to-date: pip in c:\program files\python37\lib\site-packages (19.2.1)
+
+C:\x3d-code\www.web3d.org\x3d>python -m pip install --user --upgrade twine
+Requirement already up-to-date: twine in c:\users\localadmin\appdata\roaming\python\python37\site-packages (1.13.0)
+Requirement already satisfied, skipping upgrade: tqdm>=4.14 in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from twine) (4.32.2)
+Requirement already satisfied, skipping upgrade: requests-toolbelt!=0.9.0,>=0.8.0 in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from twine) (0.9.1)
+Requirement already satisfied, skipping upgrade: requests!=2.15,!=2.16,>=2.5.0 in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from twine) (2.22.0)
+Requirement already satisfied, skipping upgrade: setuptools>=0.7.0 in c:\program files\python37\lib\site-packages (from twine) (41.0.1)
+Requirement already satisfied, skipping upgrade: readme-renderer>=21.0 in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from twine) (24.0)
+Requirement already satisfied, skipping upgrade: pkginfo>=1.4.2 in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from twine) (1.5.0.1)
+Requirement already satisfied, skipping upgrade: chardet<3.1.0,>=3.0.2 in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from requests!=2.15,!=2.16,>=2.5.0->twine) (3.0.4)
+Requirement already satisfied, skipping upgrade: urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1 in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from requests!=2.15,!=2.16,>=2.5.0->twine) (1.25.3)
+Requirement already satisfied, skipping upgrade: idna<2.9,>=2.5 in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from requests!=2.15,!=2.16,>=2.5.0->twine) (2.8)
+Requirement already satisfied, skipping upgrade: certifi>=2017.4.17 in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from requests!=2.15,!=2.16,>=2.5.0->twine) (2019.6.16)
+Requirement already satisfied, skipping upgrade: docutils>=0.13.1 in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from readme-renderer>=21.0->twine) (0.15.2)
+Requirement already satisfied, skipping upgrade: Pygments in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from readme-renderer>=21.0->twine) (2.4.2)
+Requirement already satisfied, skipping upgrade: six in c:\program files\python37\lib\site-packages (from readme-renderer>=21.0->twine) (1.12.0)
+Requirement already satisfied, skipping upgrade: bleach>=2.1.0 in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from readme-renderer>=21.0->twine) (3.1.0)
+Requirement already satisfied, skipping upgrade: webencodings in c:\users\localadmin\appdata\roaming\python\python37\site-packages (from bleach>=2.1.0->readme-renderer>=21.0->twine) (0.5.1)
+
+C:\x3d-code\www.web3d.org\x3d\stylesheets\python>python -m twine upload dist/*
+Enter your username: brutzman
+Enter your password:
+Uploading distributions to https://upload.pypi.org/legacy/
+Uploading x3d-0.0.2-py3-none-any.whl
+100%|█████████████████████████████████████████████████████████████████████████████| 10.3k/10.3k [00:00<00:00, 10.8kB/s]
+Uploading x3d-0.0.2.tar.gz
+100%|█████████████████████████████████████████████████████████████████████████████| 7.68k/7.68k [00:01<00:00, 5.40kB/s]
+
+C:\x3d-code\www.web3d.org\x3d\stylesheets\python>cd ..
+
+C:\x3d-code\www.web3d.org\x3d\stylesheets>python  -m pip install --user --upgrade x3d
+Collecting x3d
+  Downloading https://files.pythonhosted.org/packages/0a/8f/ac80d086962020f7477f10aeeea34fbfc28ceb2a738d434228bbc4732024/x3d-0.0.2-py3-none-any.whl
+Installing collected packages: x3d
+Successfully installed x3d-0.0.2
+
+C:\x3d-code\www.web3d.org\x3d\stylesheets>cd ..
+
+C:\x3d-code\www.web3d.org\x3d>python  -m pip install --user --upgrade x3d
+Requirement already up-to-date: x3d in c:\users\localadmin\appdata\roaming\python\python37\site-packages (0.0.2)
+===========================================================================================

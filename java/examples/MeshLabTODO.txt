@@ -1,0 +1,7 @@
+MeshLab shortfalls
+
+- X3D root: use version="3.3" rather than version="3.1"
+- X3D root: output profile and version attributes first for readability, canonical form
+- import basic geometry: Box, Sphere, Text
+
+

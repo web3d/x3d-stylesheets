@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+
+<!--
+  Copyright (c) 2000-2019 held by the author(s).  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer
+      in the documentation and/or other materials provided with the
+      distribution.
+    * Neither the names of the Naval Postgraduate School (NPS)
+      Modeling Virtual Environments and Simulation (MOVES) Institute
+      (http://www.nps.edu and http://www.MovesInstitute.org)
+      nor the names of its contributors may be used to endorse or
+      promote products derived from this software without specific
+      prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<project name="Python Pyjnius SAI build" default="all" basedir=".">
+    
+    <description>Builds, tests, and runs the X3D Python SAI Library project using Pyjnius.</description>
+    <!-- https://docs.python.org/3.7  https://docs.python.org/3.7/tutorial -->
+	
+    <property name="java.dir"                value=".."/>
+    <!-- java jvmarg parameters ignored on server unless forked -->
+    <property name="fork"                value="true"/>    <!-- note that Netbeans default path is built in and has to be overridden by going to ...TODO... -->
+    
+    <property name="javac.verbose"            value="-verbose"/>
+    <property name="java.classes.dir"         value="${java.dir}/classes"/>
+    <property name="java.examples.dir"        value="${java.dir}/examples"/>
+    <property name="java.jars.dir"            value="${java.dir}/jars"/>
+    <property name="java.lib.dir"          location="${java.dir}/lib"/>
+    <property name="java.src.dir"             value="${java.dir}/src"/>
+    <property name="content.examples.src.dir" value="../../../../../content/examples"/>
+	<property name="x3djsail.stylesheets.dir" value="${x3djsail.dir}/jars"/>
+			
+    <property name="java.coderextreme.dir"    value="${java.src.dir}/net/coderextreme"/>
+    <property name="nashorn.dir"              value="${java.dir}/nashorn"/>
+    <property name="nashorn.examples.dir"     value="${nashorn.dir}/examples"/>
+    <property name="java.jars.dir"            value="${java.dir}/jars"/>
+    <property name="src.org.web3d.x3d.jsail"  value="${java.src.dir}/org/web3d/x3d/jsail"/><!-- concretes  -->
+    <property name="src.org.web3d.x3d.sai"    value="${java.src.dir}/org/web3d/x3d/sai"/>  <!-- interfaces -->
+    <property name="jsai.classes.archive.jar.name" value="X3DJSAIL.4.0.classes.jar"/>
+    <property name=   "jsai.full.archive.jar.name" value="X3DJSAIL.4.0.full.jar"/>
+    <property name="archive.path"          location="."/>
+    <property name="archive.name"             value="_archiveName_"/>
+    <property name=   "saxon.jar.name"        value="saxon9he.jar"/>
+    <property name=   "node"                  value="node.exe"/>
+
+    <property name="result.dir" location="."/>
+    <property name="result.classes.instr.dir" location="${result.dir}/classes-instr"/>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/> <!-- installation prerequisite -->
+
+    <target name="all" depends="clean,configuration">
+        <echo message="convert all X3D examples to python"/>
+        <antcall target="processAllScenes.x3dToPython"/>
+        <antcall target="processAllScenes.pythonValidation"/>
+    </target>
+
+    <target name="clean" description="clean out unnecessary backup files (only)">
+        <echo message="clean/delete backup files for project pyjnius"/>
+        <delete verbose="true" includeemptydirs="true">
+		<fileset dir="." includes="examples/HelloWorld*.py"/>
+		<fileset dir="." includes="examples/HelloWorld_RoundTrip*.x3d"/>
+            <fileset dir="." includes="**/__pycache__"/>
+            <fileset dir="." includes="**/node_modules"/>
+            <fileset dir="." includes="**/__node_modules__"/>
+            <fileset dir="." includes="**/*.bak"/>
+            <fileset dir="." includes="**/hs_err_pid*.log"/>
+            <fileset dir="." includes="**/manifest.mf"/>
+            <fileset dir="." includes="**/*.$$$$$$"/> <!-- escape $ as $$ -->
+        </delete>
+    </target>
+
+    <target name="configuration.prerequisites" description="Configure prerequisites for local Python installation">
+        <echo message="Ensure needed libraries are installed."/>
+        <echo/>
+        <echo message="Full administrator permissions may be needed to run these tasks successfully!"/>
+        <echo message="Meanwhile ensure that no other user accounts are simultaneously locking files."/>
+        <echo message="================================="/>
+        <echo message="node.js and npm are required  https://nodejs.org/en  https://docs.npmjs.com/cli/install"/>
+        <echo message="- - - - -"/>
+        <echo message="which node"/>
+        <exec executable="which">
+            <arg value="node"/>
+        </exec>
+        <echo message="- - - - -"/>
+        <echo message="node --version"/>
+        <exec executable="node" vmlauncher="false"><!-- vmlauncher switch needed for netbeans invocation -->
+            <arg value="--version"/>
+        </exec>
+        <echo message="- - - - -"/>
+        <echo message="npm.cmd --version"/>
+        <exec executable="npm.cmd" vmlauncher="false">
+            <arg value="--version"/>
+        </exec>
+        <echo message="- - - - -"/>
+        <echo message="npm.cmd install"/>
+        <exec executable="npm.cmd" vmlauncher="false">
+            <arg value="install"/>
+        </exec>
+        <echo message="- - - - -"/>
+        <echo message="npm.cmd version"/>
+        <exec executable="npm.cmd" vmlauncher="false">
+            <arg value="version"/>
+        </exec>
+        <echo message="- - - - -"/>
+        <echo message="npm.cmd audit"/>
+        <exec executable="npm.cmd" vmlauncher="false">
+            <arg value="audit"/>
+        </exec>
+        <echo message="================================="/>
+        <echo message="which java"/>
+        <exec executable="which">
+            <arg value="java"/>
+        </exec>
+        <echo message="- - - - -"/>
+        <echo message="java -version"/>
+        <exec executable="java">
+            <arg value="-version"/>
+        </exec>
+        <echo message="- - - - -"/>
+        <echo message="which python"/>
+        <exec executable="which">
+            <arg value="python"/>
+        </exec>
+        <echo message="- - - - -"/>
+        <echo message="python --version"/>
+        <exec executable="python">
+            <arg value="--version"/>
+        </exec>
+        <echo message="================================="/>
+        <echo message="Pyjnius is a Python library for accessing Java classes,"/>
+        <echo message="refer to Pyjnius page for JDK JAVA_HOME and PATH requirements."/>
+        <echo message="https://pyjnius.readthedocs.io/en/latest/installation.html"/>
+        <echo/>
+        <echo message="Full administrator permissions may be needed to run these tasks successfully!"/>
+        <echo message="Meanwhile ensure that no other user accounts are simultaneously locking files."/>
+        <echo message="- - - - -"/>
+        <exec executable="python">
+            <arg value="--version"/>
+        </exec>
+        <echo message="- - - - -"/>
+        <echo message="python -m pip install --upgrade pip setuptools"/>
+        <exec executable="python">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="--upgrade"/>
+            <arg value="pip"/>
+            <arg value="setuptools"/>
+        </exec>
+        <echo message="- - - - -"/>
+        <echo message="python -m pip install --upgrade cython"/>
+        <exec executable="python">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="--upgrade"/>
+            <arg value="cython"/>
+        </exec>
+        <echo message="- - - - -"/>
+        <echo message="python -m pip install --upgrade pyjnius"/>
+        <exec executable="python">
+            <arg value="-m"/>
+            <arg value="pip"/>
+            <arg value="install"/>
+            <arg value="--upgrade"/>
+            <arg value="pyjnius"/>
+        </exec>
+        <echo message="If there is a problem with Microsoft Visual C++ Build Tools, be sure that the checkbox for 'Python development' is selected during installation."/>
+        <echo message="================================="/>
+    </target>
+
+    <target name="makeorg" description="create python tree" depends="">
+        <!-- https://stackoverflow.com/questions/17268696/executing-shell-script-through-ant -->
+        <echo message="create python tree"/>
+        <echo message="runs from within bash, Netbeans on Windows has trouble with it"/>
+        <exec dir="." executable="/bin/bash">
+            <arg file="C:\x3d-code\www.web3d.org\x3d\stylesheets\java\src\python\pyjnius\makeorg.sh"/>
+        </exec>
+    </target>
+
+    <target name="configuration" description="Configure local files" depends="clean,configuration.prerequisites,HelloWorld.python">
+        <echo message="create conversion scripts using python programs autoclass.py fieldTypesGenerator.py mapToMethodGenerator.py"/>
+        <exec executable="python">
+            <arg value="autoclass.py"/>
+            <arg value="-v"/><!-- verbose -->
+        </exec>
+        <!-- These two create JS files for configuring the python creation -->
+        <exec executable="python">
+            <arg value="fieldTypesGenerator.py"/>
+            <arg value="-v"/><!-- verbose -->
+        </exec>
+        <exec executable="python">
+            <arg value="mapToMethodGenerator.py"/>
+            <arg value="-v"/><!-- verbose -->
+        </exec>
+        <echo message="build configuration complete"/>
+    </target>
+    
+    <target name="processAllScenes.x3dToPython" description="generate python files" depends="">
+        <foreach target="processSingleScene.x3dToPython"  param="theFile">
+            <path>
+                <fileset dir="../../../../../content/examples/X3dForWebAuthors">
+                    <include name="**/*.x3d"/>
+                    <exclude name="**/*new*.x3d"/>
+                    <exclude name="**/*future*.x3d"/>
+                    <exclude name="**/*RoundTrip*.x3d"/>
+                    <exclude name="_archive/*.*"/>
+                    <exclude name="**/_archive/*.*"/>
+                    <exclude name="_schematron/*.*"/>
+                    <exclude name="**/_schematron/*.*"/>
+                    <exclude name="**/hide/*"/>
+                    <exclude name="**/**/hide/*"/>
+                    <exclude name="InstallingCortonaBrowserAsPowerpointControl_files/*.*"/>
+                    <exclude name="**/build.xml"/>
+                    <exclude name="nbproject/**/*.xml"/>
+                    <exclude name="configuration/**/*.*"/>
+                    <exclude name="**/*Canonical.xml"/>
+                    <exclude name="**/*.nrrd"/>
+                </fileset>
+            </path>
+        </foreach>
+    </target>
+    
+    <target name="processSingleScene.x3dToPython" description="generate python file" depends="">
+        <if>
+            <!-- https://ant.apache.org/manual/Tasks/conditions.html -->
+            <contains string="${theFile}" substring="{theFile}" /><!-- undefined -->
+            <then>
+                <echo message="processSingleScene.x3dToPython must get invoked via processAllScenes.x3dToPython"/> <!-- in order to get a filename -->
+            </then>
+            <else>
+                <echo message="create python: node xml2all.js ${theFile}"/>
+                <exec executable="node">
+                    <arg value="xml2all.js"/>
+                    <arg value="${theFile}"/>
+                </exec>
+            </else>
+        </if>
+    </target>
+
+    <!-- properties common to all build files and archives ======================================== -->
+    <property environment="env"/>
+    
+    <!-- https://stackoverflow.com/questions/20970732/jnius-1-1-import-error -->
+    <!-- https://pyjnius.readthedocs.io/en/stable/installation.html -->
+    <!-- TODO other OS variants needed? -->
+    <property name="pyjnius.configurationPath" value="${env.JAVA_HOME}/jre/bin/server;${env.PATH}"/><!-- help pyjnius find jvm.dll -->
+    
+    <property name="pyjnius.X3DautoclassPath" location="."/>
+    
+    <target name="processAllScenes.pythonValidation" description="generate new X3d files" depends="">
+        <!-- http://ant.apache.org/manual/Tasks/echoproperties.html -->
+        <!--  debug: inspect output to note OS-specific capitalization of env.PATH -->
+        <echoproperties regex="env.(P|p)(A|a)(T|t)(H|h)$" />
+        
+        <echo message="$env.JAVA_HOME=${env.JAVA_HOME}"/>
+		<echo message="$env.CLASSPATH=${env.CLASSPATH}"/>
+        <echo message="pyjnius.X3DautoclassPath =${pyjnius.X3DautoclassPath}"/>
+        <echo message="pyjnius.configurationPath=${pyjnius.configurationPath}"/>
+        <echo message="====================="/>
+        
+        <!-- run Python files Begin -->
+        <foreach target="processSingleScene.pythonValidation"  param="theFile">
+            <path>
+                <fileset dir="../../../../../content/examples/X3dForWebAuthors">
+                    <include name="**/*.py"/>
+                    <exclude name="**/X3Dautoclass.py"/>
+                    <exclude name="**/autoclass.py"/>
+                    <exclude name="**/fieldTypesGenerator.py"/>
+                    <exclude name="**/mapToMethodGenerator.py"/>
+                    <exclude name="_archive/*.*"/>
+                    <exclude name="**/_archive/*.*"/>
+                    <exclude name="_schematron/*.*"/>
+                    <exclude name="**/_schematron/*.*"/>
+                    <exclude name="**/hide/*"/>
+                    <exclude name="**/**/hide/*"/>
+                    <exclude name="InstallingCortonaBrowserAsPowerpointControl_files/*.*"/>
+                    <exclude name="**/build.xml"/>
+                    <exclude name="nbproject/**/*.xml"/>
+                    <exclude name="configuration/**/*.*"/>
+                    <exclude name="**/*Canonical.xml"/>
+                    <exclude name="**/*.nrrd"/>
+                </fileset>
+            </path>
+        </foreach>
+    </target>
+    
+    <target name="processSingleScene.pythonValidation" description="generate new X3D file" depends="">
+        <!-- https://pyjnius.readthedocs.io -->
+        
+        <if>
+            <!-- https://ant.apache.org/manual/Tasks/conditions.html -->
+            <contains string="${theFile}" substring="{theFile}" /><!-- undefined -->
+            <then>
+                <echo message="processSingleScene.pythonValidation must get invoked via processAllScenes.pythonValidation"/> <!-- in order to get a filename -->
+            </then>
+            <else>
+                <echo message="processSingleScene.python ${theFile}"/>
+                <echo message="Loading X3D model as .py program, if successful then saving as round-trip .x3d version:"/>
+                <!-- https://ant.apache.org/manual-1.9.x/Tasks/exec.html Examples -->
+                <exec executable="python">
+                    <!-- https://stackoverflow.com/questions/5607580/how-to-set-the-path-environment-variable-from-ant-script -->
+                    <env key="PATH"       path="${pyjnius.configurationPath}"/>
+                    <env key="PYTHONPATH" path="${pyjnius.X3DautoclassPath}"/>
+                    <arg value="${theFile}"/>
+                    <arg value="-v"/><!-- verbose -->
+                </exec>
+                <echo message="====================="/>
+            </else>
+        </if>
+    </target>
+    
+    <target name="HelloWorld.python" description="primary scene test: generate python source, run validation test" depends="">
+        <echo message="$env.JAVA_HOME=${env.JAVA_HOME}"/>
+        <echo message="$env.CLASSPATH=${env.CLASSPATH}"/>
+        <echo message="$pyjnius.X3DautoclassPath =${pyjnius.X3DautoclassPath}"/>
+        <echo message="PYTHONPATH                =${pyjnius.X3DautoclassPath}"/>
+        <echo message="$pyjnius.configurationPath=${pyjnius.configurationPath}"/>
+        <echo message="Verifying Apache Ant XML Catalog resolver classpath: ${resolver.dir}/resolver.jar (${resolver.jar.length} bytes)"/>
+        <echo message="====================="/>
+
+        <!-- process individual files here. show full path to facilitate user loading, editing of reported files -->
+        <!-- see stylesheets/java/src/python/pyjnius/build.xml -->
+        <echo message="create python:"/>
+	<echo message="node xml2all.js examples/HelloWorld.x3d"/>
+        <exec executable="node" vmlauncher="false"><!-- vmlauncher switch needed for netbeans invocation -->
+            <arg value="${pyjnius.X3DautoclassPath}/xml2all.js"/>
+	    <arg value="examples/HelloWorld.x3d"/>
+        </exec>
+        <!-- TODO verify result -->
+	<echo>examples/HelloWorld.x3d converted to examples/HelloWorld.py and examples/HelloWorld.future.py</echo>
+
+        <!-- now run python output to validate -->
+        <echo message="- - - - - - - - - - -"/>
+        <echo message="validate python:"/>
+        <!-- https://ant.apache.org/manual-1.9.x/Tasks/exec.html Examples -->
+        <!-- https://stackoverflow.com/questions/5607580/how-to-set-the-path-environment-variable-from-ant-script -->
+	<echo message="Loading examples/HelloWorld.py with python, if successful then saving and validating as examples/HelloWorld_RoundTrip1.x3d version:"/>
+        <!-- debug
+        <echo message="$env.PATH                 =${env.PATH}"/>
+        <echo message="$pyjnius.configurationPath=${pyjnius.configurationPath}"/>
+        <echo message="$pyjnius.X3DautoclassPath =${pyjnius.X3DautoclassPath}"/>
+        -->
+        <exec executable="python"  dir="${pyjnius.X3DautoclassPath}" vmlauncher="false">
+            <env key="PATH"       path="${pyjnius.configurationPath}"/>
+            <env key="PYTHONPATH" path="${pyjnius.X3DautoclassPath}"/>
+	    <arg value="examples/HelloWorld.py"/>
+            <arg value="-v"/><!-- verbose -->
+        </exec>
+
+	<move     file="examples/HelloWorld_RoundTrip.x3d"  quiet="true" failonerror="false" verbose="false"
+		tofile="examples/HelloWorld_RoundTrip1.x3d"/>
+	<echo message="validate examples/HelloWorld_RoundTrip1.x3d"/>
+	<!-- immutable <length property="RoundTrip1.length" file="examples/HelloWorld_RoundTrip1.x3d"/> -->
+        <java classname="org.web3d.x3d.jsail.CommandLine" fork="${fork}">
+            <arg value="-validate"/>
+	    <arg value="examples/HelloWorld_RoundTrip1.x3d"/><!-- input model -->
+        </java>
+	<echo message="examples/HelloWorld.py round-trip load test #1 complete"/>
+        <echo message="- - - - - -"/>
+
+	<echo message="Loading examples/HelloWorld.future.py with python, if successful then saving and validating as examples/HelloWorld_RoundTrip2.x3d version:"/>
+        <exec executable="python"  dir="${pyjnius.X3DautoclassPath}" vmlauncher="false">
+            <env key="PATH"       path="${pyjnius.configurationPath}"/>
+            <env key="PYTHONPATH" path="${pyjnius.X3DautoclassPath}"/>
+	    <arg value="examples/HelloWorld.future.py"/>
+            <arg value="-v"/><!-- verbose -->
+        </exec>
+
+	<move     file="examples/HelloWorld_RoundTrip.x3d" quiet="true" failonerror="false" verbose="false"
+		tofile="examples/HelloWorld_RoundTrip2.x3d"/>
+        <java classname="org.web3d.x3d.jsail.CommandLine" fork="${fork}">
+            <arg value="-validate"/>
+	    <arg value="examples/HelloWorld_RoundTrip2.x3d"/><!-- input model -->
+        </java>
+	<echo message="examples/HelloWorld.future.py round-trip load test #2 complete"/>
+        <echo message="====================="/>
+	<echo>process examples/HelloWorld.python complete.</echo>
+    </target>
+    
+</project>

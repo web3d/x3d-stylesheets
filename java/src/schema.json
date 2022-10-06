@@ -1,0 +1,226 @@
+C:\Users\coderextreme\AppData\Roaming\npm\jsonlint -> C:\Users\coderextreme\AppData\Roaming\npm\node_modules\jsonlint\lib\cli.js
++ jsonlint@1.6.3
+updated 1 package in 0.75s
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$defs": {
+    "StringBuilder": {
+      "type": "object",
+      "properties": {
+        "coder": {
+          "type": "integer"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "X3DConcreteElement": {
+      "type": "object",
+      "properties": {
+        "parentObject": {
+          "$ref": "#/$defs/X3DConcreteElement"
+        },
+        "validationResult": {
+          "$ref": "#/$defs/StringBuilder"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "Scene": {
+      "type": "object",
+      "properties": {
+        "children": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "parentObject": {
+          "$ref": "#/$defs/X3DConcreteElement"
+        },
+        "validationResult": {
+          "$ref": "#/$defs/StringBuilder"
+        }
+      }
+    },
+    "bufferedWriter": {
+      "type": "object",
+      "properties": {
+        "cb": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lock": {},
+        "nChars": {
+          "type": "integer"
+        },
+        "nextChar": {
+          "type": "integer"
+        },
+        "out": {
+          "type": "object",
+          "properties": {
+            "lock": {},
+            "writeBuffer": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "writeBuffer": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "commentsList": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "exificientGrammarX3D": {
+      "type": "object"
+    },
+    "head": {
+      "type": "object",
+      "properties": {
+        "commentsList": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "componentList": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "commentsList": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "level": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "parentObject": {
+                "$ref": "#/$defs/X3DConcreteElement"
+              },
+              "validationResult": {
+                "$ref": "#/$defs/StringBuilder"
+              }
+            }
+          }
+        },
+        "metaList": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "commentsList": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "content": {
+                "type": "string"
+              },
+              "dir": {
+                "type": "string"
+              },
+              "http_equiv": {
+                "type": "string"
+              },
+              "lang": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "parentObject": {
+                "$ref": "#/$defs/X3DConcreteElement"
+              },
+              "scheme": {
+                "type": "string"
+              },
+              "validationResult": {
+                "$ref": "#/$defs/StringBuilder"
+              }
+            }
+          }
+        },
+        "parentObject": {
+          "$ref": "#/$defs/X3DConcreteElement"
+        },
+        "unitList": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string"
+              },
+              "commentsList": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "conversionFactor": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "parentObject": {
+                "$ref": "#/$defs/X3DConcreteElement"
+              },
+              "validationResult": {
+                "$ref": "#/$defs/StringBuilder"
+              }
+            }
+          }
+        },
+        "validationResult": {
+          "$ref": "#/$defs/StringBuilder"
+        }
+      }
+    },
+    "includeSubdirectoryPaths": {
+      "type": "boolean"
+    },
+    "parentObject": {
+      "$ref": "#/$defs/X3DConcreteElement"
+    },
+    "profile": {
+      "type": "string"
+    },
+    "validationResult": {
+      "$ref": "#/$defs/StringBuilder"
+    },
+    "version": {
+      "type": "string"
+    }
+  }
+}

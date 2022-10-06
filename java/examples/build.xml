@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+
+<!--
+  Copyright (c) 2000-2021 held by the author(s).  All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer
+      in the documentation and/or other materials provided with the
+      distribution.
+    * Neither the names of the Naval Postgraduate School (NPS)
+      Modeling Virtual Environments and Simulation (MOVES) Institute
+      (http://www.nps.edu and http://www.MovesInstitute.org)
+      nor the names of its contributors may be used to endorse or
+      promote products derived from this software without specific
+      prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<project name="X3DJSAIL: X3D Java SAI Library examples." default="default" basedir=".">
+    <description>Builds, tests, and runs the X3DJSAIL examples.</description>
+	
+<!--<import file="nbproject/build-impl.xml"/>-->
+
+    <!-- properties common to all build files and archives ======================================== -->
+    <property environment="env"/>
+
+    <!-- java jvmarg parameters ignored on server unless forked -->
+    <property name="fork"                value="true"/>
+    
+    <!-- Netbeans > Tools > Options > Java > Ant                                              -->
+    <!-- and then pointing to C:\apache-ant-1.10.4 (or somesuch locally installed directory)  -->
+
+    <!-- ANT Contrib archive at http://sourceforge.net/projects/ant-contrib/files    (v1.0b3) -->
+    <!-- must have ant-contrib-1.0b3.jar in ANT_HOME/lib (or else specify path)               -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+    
+    <!-- jslint4java: a Java wrapper around Douglas Crockford's jslint tool. -->
+    <!-- https://code.google.com/p/jslint4java -->
+    <!-- http://docs.jslint4java.googlecode.com/git/2.0.5/ant.html -->
+    <!-- http://happygiraffe.github.io/jslint4java/cli.html -->
+    <!-- http://kaatz-media.com/2011/10/06/uberprufen-von-javascript-dateien-ant-und-jslint-jenkins-using-ant-on-jenkins-for-jslint -->
+    <!-- TODO bug report: https://code.google.com/p/jslint4java/issues/detail?id=101 -->
+    <property name="jslint.jar"     value="../lib/jslint4java-2.0.5.jar"/>
+    <taskdef name="jslint" 
+             classname="com.googlecode.jslint4java.ant.JSLintTask"
+             classpath="${jslint.jar}" />
+    <property name="jslint.options" value="white"/>
+    <!-- unused options: ass,bitwise,browser,closure,continue,debug,devel,eqeq,es5,evil,forin,indent,maxerr,maxlen,newcap,node,nomen,passfail,plusplus,predef,properties,regexp,rhino,sloppy,stupid,sub,todo,unparam,vars,warnings, -->
+
+    <!-- https://github.com/fge/json-schema-validator -->
+    <!-- https://stackoverflow.com/questions/22867521/how-to-run-json-schema-validator-from-the-command-line -->
+    <!-- fix double-hyphen switch when running on command line: -->
+    <!-- java -jar lib/json-schema-validator-2.2.6-lib.jar - -help -->
+    <!-- java -jar lib/json-schema-validator-2.2.6-lib.jar - -syntax ../../specifications/x3d-3.3-JSONSchema.json -->
+    <!-- java -jar lib/json-schema-validator-2.2.6-lib.jar ../../specifications/x3d-3.3-JSONSchema.json test/HelloWorld.json -->
+    <property name="json-schema-validator.jar"     value="../lib/json-schema-validator-2.2.6-lib.jar"/>
+
+    <!-- https://stackoverflow.com/questions/919692/how-to-execute-xslt-2-0-with-ant -->
+    <property name="saxon.dir"               value="lib" description="relative path"/>
+    <property name="saxon.jar"           value="saxon-he-10.6.jar"/><!-- saxon9he.jar -->
+
+    <!-- http://openexi.sourceforge.net -->
+    <!-- https://sourceforge.net/projects/openexi/files -->
+    <property name="openexi.dir"             value="lib" description="relative path"/>
+    <property name="openexi.jar"             value="nagasena.jar"/>
+    <property name="openexi-rta.jar"         value="nagasena-rta.jar"/>
+    
+    <!-- https://exificient.github.io/java -->
+    <!-- https://exificient.github.io/java/exificient-gui-jar-with-dependencies.jar -->
+    <property name="exificient.dir"          value="lib" description="relative path"/>
+    <property name="exificient.jar"          value="exificient-gui-jar-with-dependencies.jar"/>
+    
+    <property name="c14n.dir"                value="../../tools/canonical/dist/lib"/>
+    <property name="c14n.jar"                value="X3dC14n.jar"/>
+    
+    <!--
+    OASIS XML Catalog standard references
+             https:///www.oasis-open.org/specs/index.php#xmlcatalogs
+             https:///www.oasis-open.org/committees/download.php/14810/xml-catalogs.pdf
+    Apache Ant validation and resolver references
+             https:///ant.apache.org/manual/Types/xmlcatalog.html
+             https:///ant.apache.org/manual/Tasks/xmlvalidate.html
+             https:///ant.apache.org/manual/Tasks/schemavalidate.html
+             https:///ant.apache.org/manual/install.html#librarydependencies
+             http://www.saxproject.org/apidoc/org/xml/sax/package-summary.html#package_description
+             https:///xerces.apache.org/xerces-j/features.html
+             https:///xerces.apache.org/xerces-j/properties.html
+    Key references:
+             https:///xml.apache.org/commons/components/resolver (then see resolver.jar)
+             https:///xerces.apache.org/xml-commons
+             https:///www.apache.org/dist/xerces/xml-commons
+    -->
+    <xmlcatalog id="X3dCatalog">
+        <dtd    publicId="ISO//Web3D//DTD X3D 3.0//EN"                                  location="${X3dDtdsSchemas.dir}/x3d-3.0.dtd"/>
+        <dtd    publicId="ISO//Web3D//DTD X3D 3.1//EN"                                  location="${X3dDtdsSchemas.dir}/x3d-3.1.dtd"/>
+        <dtd    publicId="ISO//Web3D//DTD X3D 3.2//EN"                                  location="${X3dDtdsSchemas.dir}/x3d-3.2.dtd"/>
+        <dtd    publicId="ISO//Web3D//DTD X3D 3.3//EN"                                  location="${X3dDtdsSchemas.dir}/x3d-3.3.dtd"/>
+        <dtd    publicId="http://www.web3d.org/specifications/x3d-3.0.dtd"              location="${X3dDtdsSchemas.dir}/x3d-3.0.dtd"/>
+        <dtd    publicId="http://www.web3d.org/specifications/x3d-3.1.dtd"              location="${X3dDtdsSchemas.dir}/x3d-3.1.dtd"/>
+        <dtd    publicId="http://www.web3d.org/specifications/x3d-3.2.dtd"              location="${X3dDtdsSchemas.dir}/x3d-3.2.dtd"/>
+        <dtd    publicId="http://www.web3d.org/specifications/x3d-3.3.dtd"              location="${X3dDtdsSchemas.dir}/x3d-3.3.dtd"/>
+        <entity publicId="http://www.web3d.org/specifications/x3d-3.0.xsd"              location="${X3dDtdsSchemas.dir}/x3d-3.0.xsd"/>
+        <entity publicId="http://www.web3d.org/specifications/x3d-3.1.xsd"              location="${X3dDtdsSchemas.dir}/x3d-3.1.xsd"/>
+        <entity publicId="http://www.web3d.org/specifications/x3d-3.2.xsd"              location="${X3dDtdsSchemas.dir}/x3d-3.2.xsd"/>
+        <entity publicId="http://www.web3d.org/specifications/x3d-3.3.xsd"              location="${X3dDtdsSchemas.dir}/x3d-3.3.xsd"/>
+        <!-- Transitional DTD, versions 3.0 and 3.1 only -->
+        <dtd    publicId="file:///www.web3d.org/TaskGroups/x3d/translation/x3d-3.0.dtd" location="${X3dDtdsSchemas.dir}/x3d-3.0.dtd"/>
+        <dtd    publicId="file:///www.web3d.org/TaskGroups/x3d/translation/x3d-3.1.dtd" location="${X3dDtdsSchemas.dir}/x3d-3.1.dtd"/>
+        <!-- fallback solution, depends on resolver.jar availability -->
+        <xmlcatalog>
+            <catalogpath location="${X3dDtdsSchemas.dir}/OasisXmlCatalogX3D.xml" description="external path to same definitions"/>
+        </xmlcatalog>
+    </xmlcatalog>
+
+    <!-- ensure backwards compatibility to specified version of Java -->
+    <property name="java.source"                value="1.8"/>
+
+    <property name="javac.verbose"              value="true"/>
+    <property name="java.dir"                location="."/>
+    <property name="java.classes.dir"        location="classes"/>
+    <property name="java.examples.dir"       location="examples"/>
+    <property name="java.jars.dir"           location="${java.dir}/jars"/>
+    <property name="java.lib.dir"            location="lib"/>
+    <property name="java.lib.support.dir"    location="${java.lib.dir}/support"/>
+    <property name="java.src.dir"            location="${java.dir}/src"/>
+    <property name="java.classes.dir"        location="${java.dir}/classes"/>
+    <property name="nashorn.dir"             location="nashorn"/>
+    <property name="node.dir"                location="node"/>
+	
+    <property name=    "src.org.web3d.x3d.jsail"   value=    "${java.src.dir}/org/web3d/x3d/jsail"/><!-- concretes  -->
+    <property name=    "src.org.web3d.x3d.sai"     value=    "${java.src.dir}/org/web3d/x3d/sai"/>  <!-- interfaces -->
+    <property name=    "tests"                     value=    "tests"/><!-- tests      -->
+    <property name="classes.org.web3d.x3d.tests"   value="${java.classes.dir}/org/web3d/x3d/tests"/><!-- tests compiled -->
+    <property name="jsai.classes.archive.jar.name" value="X3DJSAIL.4.0.classes.jar"/>
+    <property name=   "jsai.full.archive.jar.name" value="X3DJSAIL.4.0.full.jar"/>
+	
+    <target name="all" depends="compile.examples,run.examples"/>
+
+    <target name="jar">
+        <ant antfile="../build.xml" target="create.X3DJSAIL" inheritAll="false"/>
+        <antcall target="compile.examples"/>
+    </target>
+    
+    <target name="build" depends="jar"/>
+    
+    <target name="clean" depends="clean.examples">
+        <ant antfile="../build.xml" target="clean" inheritall="fasle"/>
+        <ant antfile="../build.xml" target="clean.X3DJSAIL"/>
+    </target>
+    
+    <target name="clean.examples">
+        <delete verbose="true" includeemptydirs="true">
+            <fileset dir="${java.classes.dir}">
+                <include name="net/**"/>
+                <include name="org/**"/>
+                <include name="X3DJSAIL.properties"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="compile.examples">
+        <path id="lib.path.ref">
+            <fileset dir="../lib" includes="*.jar"/>
+        </path>
+        <javac  srcdir="${java.examples.dir}"
+                source="${java.source}"
+                target="${java.source}"
+               destdir="${java.classes.dir}" debug="on" verbose="${javac.verbose}" 
+               classpath="jars/X3DJSAIL.4.0.full.jar" includeantruntime="false" fork="${fork}">
+            <!-- -Xlint reports problems with no definition of serialVersionUID
+            <compilerarg value="-Xlint:all"/>
+            -->
+            <!-- http://ant.apache.org/manual/Tasks/javac.html#bootstrap -->
+            <!-- https://stackoverflow.com/questions/4134803/ant-passing-compilerarg-into-javac -->
+            <compilerarg value="-Xbootclasspath/p:${toString:lib.path.ref}"/>
+        </javac>
+        <copy file="${java.examples.dir}/X3DJSAIL.properties" toDir="${java.classes.dir}"/>
+    	<echo message="compile.examples complete"/>
+    </target>
+    
+    <target name="run.examples">
+        <java classname="HelloWorldProgram" dir="${java.classes.dir}" fork="${fork}">
+            <classpath>
+                <fileset dir="${java.lib.dir}">
+                    <include name="exificient-gui-jar-with-dependencies.jar"/>
+                    <include name="istack-commons-runtime.jar"/>
+                    <include name="jaxb-api.jar"/>
+                    <include name="javax.activation-api.jar"/>
+                    <include name="jaxb-runtime.jar"/>
+                    <include name="jdom.jar"/>
+                    <include name="log4j-1.2.15.jar"/>
+                    <include name="nagasena.jar"/>
+                    <include name="nagasena-rta.jar"/>
+                    <include name="saxon9he.jar"/>
+                    <include name="X3dC14n.jar"/>
+                </fileset>
+                <fileset dir="jars">
+                    <include name="X3DJSAIL.4.0.classes.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+    	<echo message="run.examples complete"/>
+    </target>
+
+    <target name="view.javadoc.local" description="view local javadoc in web browser (Netbeans only)">
+        <nbbrowse file="javadoc/index.html" />
+        <!-- TODO implementation-independent approach if possible.  other Ant approaches have to be customized for each OS -->
+    </target>
+
+    <target name="view.javadoc.online" description="view online javadoc in web browser (NetBeans only)">
+        <nbbrowse url="http://www.web3d.org/specifications/java/javadoc/index.html" />
+    </target>
+
+    <property name="antVersionMinimum" value="1.10.5"/>
+    <antversion property="antVersionOK" atleast="${antVersionMinimum}"/>
+	
+    <target name="antVersionCheck" unless="antVersionOK">
+        <echo message="${ant.version}"/>
+        <echo message="Ant must be at least ${antVersionMinimum} to run build.xml test.junit5 for X3DJSAIL (which are still under development)"/>
+    </target>
+	
+    <target name="test.junit5.directly" description="Test X3DJSAIL using JUnit5, direct invocation of code" depends="antVersionCheck">
+        <java classname="org.web3d.x3d.tests.FieldObjectTests" fork="${fork}">
+            <classpath>
+                <pathelement location="${java.classes.dir}" />
+                <!-- also found in project properties, for both X3DJSAIL and stylesheets projects -->
+                <pathelement location="${java.lib.support.dir}/junit-platform-commons-1.5.0.jar" />
+                <pathelement location="${java.lib.support.dir}/junit-platform-engine-1.5.0.jar" />
+                <pathelement location="${java.lib.support.dir}/junit-platform-launcher-1.5.0.jar" />
+                <pathelement location="${java.lib.support.dir}/opentest4j-1.1.0.jar" />
+                <pathelement location="${java.lib.support.dir}/jupiter/junit-jupiter-api-5.5.0.jar" />
+                <pathelement location="${java.lib.support.dir}/jupiter/junit-jupiter-engine-5.5.0.jar" />
+                <pathelement location="${java.lib.support.dir}/apiguardian-api-1.1.0.jar" />
+            </classpath>
+        </java>
+    </target>
+    
+    <!-- Despite what the ant docs say @ https://ant.apache.org/manual/Tasks/junitlauncher.html, the only option that works
+         is to use the command line and invoke: ant -lib lib/support test.junit5.ant
+         This could be set up as an "exec" task, but one would have to first determine one's O/S and invoke accordingly.
+    -->
+    <target name="test.junit5.ant" description="Test X3DJSAIL using JUnit5 via Ant junitlauncher" depends="antVersionCheck">
+        <!-- https://junit.org/junit5/docs/current/user-guide/#running-tests-build-ant -->
+        <!-- https://ant.apache.org/manual/Tasks/junitlauncher.html -->
+        <!-- junit5 requires Ant version 1.10.5 -->
+        <!-- Note that junit jars go in ANT_HOME/lib, not in project, for example C:\apache-ant-1.10.5\lib -->
+		
+        <echo message="==========================================="/>
+        <echo message="ant ${ant.version} build.xml test.junit5 for X3DJSAIL"/>
+		
+        <!-- Project property: jars/junit5 folder for *.jar -->
+		
+        <path id="junit.platform.libs.classpath">
+            <fileset dir="${java.lib.support.dir}/" />
+        </path>
+        <path id="junit.engine.jupiter.classpath">
+            <fileset dir="${java.lib.support.dir}/jupiter/" />
+        </path>
+        
+        <pathconvert property="classpathJunit" refid="junit.platform.libs.classpath"/>
+        
+        <echo>JUnit classpath is: ${classpathJunit}</echo>
+        
+        <pathconvert property="classpathJupiter" refid="junit.engine.jupiter.classpath"/>
+        
+        <echo>JUnit jupiter classpath is: ${classpathJupiter}</echo>
+		
+        <property name="output.dir" value="classes"/>
+		
+        <!-- The location where you have your compiled classes ${classes.org.web3d.x3d.tests}-->
+        <!-- 
+        <echo message="$test.classpath=${test.classpath}"/>
+        ... -->
+        <echo message="compiling tests..."/>
+        <mkdir     dir="${classes.org.web3d.x3d.tests}"/>
+        <javac  srcdir="${tests}"
+                source="${java.source}"
+                target="${java.source}"
+               destdir="${classes.org.web3d.x3d.tests}" 
+                 debug="on"
+               verbose="${javac.verbose}" 
+               classpathref="junit.engine.jupiter.classpath" includeantruntime="false" failonerror="false" fork="${fork}">
+               <classpath>
+                   <pathelement location="${java.classes.dir}" />
+               </classpath>
+        </javac>
+
+        <echo message="running tests..."/>
+        <junitlauncher>
+            <classpath refid="junit.platform.libs.classpath"/>
+            <classpath refid="junit.engine.jupiter.classpath"/>
+            <classpath>
+                <pathelement location="${tests}"/>
+                <pathelement location="${java.classes.dir}" />
+            </classpath>
+            <test name="org.web3d.x3d.tests.FieldObjectTests" methods="fieldObjectInitializationsTest" haltOnFailure="true"/>
+            <!--
+<testclasses outputdir="${output.dir}">
+<fileset dir="${classes.org.web3d.x3d.tests}"/>
+            <listener type="legacy-brief" sendSysOut="true"/>
+<listener type="legacy-xml" sendSysErr="true" sendSysOut="true"/>
+</testclasses>
+            -->
+        </junitlauncher>
+
+        <echo message="junitlauncher task complete"/>
+        <echo message="==========================================="/>
+    </target>
+
+    <target name="test.nashorn.relay" description="Test Nashorn output from X3DJSAIL">
+        <echo message="==========================================="/>
+        <echo message="java/build.xml target test.nashorn.relay:"/>
+        <echo message="   ant nashorn/build.xml test.nashorn"/>
+        <ant antfile="nashorn/build.xml" target="test.nashorn" inheritAll="false"/>
+        <!-- inheritAll="false" to ensure that properties do not interfere with each other -->
+        <echo message="==========================================="/>
+    </target>
+    <target name="test.node.relay" description="Test Node output from X3DJSAIL">
+        <echo message="==========================================="/>
+        <echo message="java/build.xml target test.node.relay:"/>
+        <echo message="   ant node/build.xml test.node"/>
+        <ant antfile="node/build.xml" target="test.node" inheritAll="false"/>
+        <!-- inheritAll="false" to ensure that properties do not interfere with each other -->
+        <echo message="==========================================="/>
+    </target>
+    
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    
+    <property name="python.dir"           location="src/python/blenderScripts"/>
+    
+    <target name="test.blender.python.all">
+        <!-- test target maintained in X3DJSAIL: X3D Java SAI Library src/python/blenderScripts build.xml -->
+        <ant dir="${python.dir}" antfile="build.xml" target="blender.python.all" inheritall="false"/>
+    </target>
+    
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+</project>
